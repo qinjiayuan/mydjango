@@ -1,0 +1,24 @@
+2023-10-18 10:06:36,989 | ERROR | logger.py:39 -D:\djangoProject\djangoProject\logger.py 
+error message
+2023-10-18 10:06:36,989 | CRITICAL | logger.py:40 -D:\djangoProject\djangoProject\logger.py 
+critical message
+2023-10-18 10:06:38,746 | ERROR | views.py:28 -D:/djangoProject/clientreview/views.py 
+该机构不存在
+2023-10-18 10:06:38,830 | ERROR | views.py:30 -D:/djangoProject/clientreview/views.py 
+该机构不存在
+2023-10-18 10:06:38,880 | ERROR | views.py:28 -D:/djangoProject/clientreview/views.py 
+该机构不存在
+2023-10-18 10:06:38,963 | ERROR | views.py:30 -D:/djangoProject/clientreview/views.py 
+该机构不存在
+2023-10-18 10:06:39,014 | ERROR | views.py:28 -D:/djangoProject/clientreview/views.py 
+该机构不存在
+2023-10-18 10:06:39,098 | ERROR | views.py:30 -D:/djangoProject/clientreview/views.py 
+该机构不存在
+2023-10-18 10:08:12,363 | ERROR | logger.py:39 -D:\djangoProject\djangoProject\logger.py 
+error message
+2023-10-18 10:08:12,363 | CRITICAL | logger.py:40 -D:\djangoProject\djangoProject\logger.py 
+critical message
+2023-10-18 10:08:17,246 | ERROR | views.py:28 -D:/djangoProject/clientreview/views.py 
+该机构不存在
+2023-10-18 10:08:17,330 | ERROR | views.py:30 -D:/djangoProject/clientreview/views.py 
+该机构不存在
