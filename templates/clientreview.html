@@ -7,7 +7,19 @@
 <body>
     <h1>{{data}}</h1>
     <h2>{{code}}</h2>
-    <button onclick="window.location.href='http://127.0.0.1:8080/clientreview/form'">返回</button>
+
+    <button id="return" onclick="setURL()">返回</button>
 
 </body>
 </html>
+<script>
+    var host = window.location.host||'127.0.0.1:8080';
+    console.log("host:",host);
+    function setURL(){
+        window.location.href='http://' + host + '/clientreview/form'
+    }
+
+
+
+</script>
+<!--&lt;!&ndash;    document.getElementById("jiayuan").href = 'http://127.0.0.1:8080/clientreview/form'&ndash;&gt;(a标签才会使用)-->

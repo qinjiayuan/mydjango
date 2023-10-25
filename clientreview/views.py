@@ -9,7 +9,7 @@ from djangoProject import models
 import requests, json
 import random
 from django.utils import log
-from djangoProject import logger
+
 from djangoProject.models import ClientReviewDetail, ClientReviewRecord, ClientReviewFileRecord, \
     ClientReviewCounterparty, CounterpartyBenefitOverList
 from django.http import JsonResponse
@@ -19,11 +19,7 @@ from django.http import JsonResponse
 class Clientreviewflow():
 
     def __init__(self, corporateName, customerManager, isnewflow, ):
-        # self.corporateName = '测试产品关注类'
-        # self.customerManager = '孙滨'
-        # self.clientIdList=[]
-        # self.env = "http://10.2.145.216:9090"
-        # self.isnewflow = '1'
+
         self.ENV = '216'
         self.corporateName = corporateName
         self.customerManager = customerManager
