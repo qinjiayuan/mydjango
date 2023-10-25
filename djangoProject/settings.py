@@ -88,6 +88,7 @@ LOGGING = {
             "backupCount": 5,  # 备份数
             "formatter": "standard",  # 输出格式
             "encoding": "utf-8",  # 设置默认编码，否则打印出来汉字乱码
+            "delay":True,
         },
         # 输出错误日志
         "error": {

@@ -1,0 +1,11 @@
+<form method="post" action="/clientreview/startjob" charset="UTF-8">
+    {% csrf_token %}
+    <label><font size="4px"><strong>公司名称</strong></font></label><br>
+    <input type="text"  name="corporatename"  placeholder="请在这里输入公司名称"><br>
+    <label><font size="4px"><strong>客户经理</strong></font></label><br>
+    <input type="text"  name="customermanager" placeholder="请在这里输入客户经理"><br>
+    <label><font size="4px"><strong>新版或旧版流程</strong></font></label><br>
+    <input type="text"  name="isnew" placeholder="0:旧版,1:新版"><br>
+    <input type="submit" value="提交" >
+
+</form>

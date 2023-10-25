@@ -13,4 +13,7 @@ def queryClient(request):
         print(i.__dict__)
     return HttpResponse(msg[0].__dict__)
 def index(request):
+    print(request.POST.get('customermanager'))
     return render(request,'index.html')
+def form(request):
+    return render(request,'clientreviewdata.html')
