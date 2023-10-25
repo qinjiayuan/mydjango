@@ -1,0 +1,5 @@
+2023-10-25 13:59:39,742  [mylogger:142] [logger:<module>] [DEBUG]- debug message
+2023-10-25 13:59:39,742  [mylogger:143] [logger:<module>] [INFO]- info message
+2023-10-25 13:59:39,742  [mylogger:144] [logger:<module>] [WARNING]- warning message
+2023-10-25 13:59:39,742  [mylogger:145] [logger:<module>] [ERROR]- error message
+2023-10-25 13:59:39,742  [mylogger:146] [logger:<module>] [CRITICAL]- critical message

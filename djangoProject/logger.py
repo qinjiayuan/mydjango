@@ -98,13 +98,13 @@ class logger():
 
         self.logger.addHandler(handler)
 
-    @staticmethod
-    def Getnum():
-        char = ''
-        str = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-        for i in range(32):
-            char += random.choice(str)
-        return char
+    # @staticmethod
+    # def Getnum():
+    #     char = ''
+    #     str = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+    #     for i in range(32):
+    #         char += random.choice(str)
+    #     return char
 
     def info(self, info):
         self.logger.info(info)

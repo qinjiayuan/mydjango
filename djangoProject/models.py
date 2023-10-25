@@ -550,7 +550,22 @@ class OtcDerivativeCounterparty(models.Model):
         managed = False
         db_table = 'OTC_DERIVATIVE_COUNTERPARTY'
 
+class CounterpartyBenefitOverList(models.Model):
+    client_id = models.TextField(blank=True, null=True)  # This field type is a guess.
+    name = models.TextField(blank=True, null=True)  # This field type is a guess.
+    id_no = models.TextField(blank=True, null=True)  # This field type is a guess.
+    proportion = models.FloatField(blank=True, null=True)
+    id = models.TextField(primary_key=True)  # This field type is a guess.
+    fiid = models.BigIntegerField(blank=True, null=True)
+    professional_investor_flag = models.TextField(blank=True, null=True)  # This field type is a guess.
+    financial_assets_of_lastyear = models.FloatField(blank=True, null=True)
+    invest_3year_exp_flag = models.TextField(blank=True, null=True)  # This field type is a guess.
+    prod_id = models.TextField(blank=True, null=True)  # This field type is a guess.
+    assets_20million_flag = models.TextField(blank=True, null=True)  # This field type is a guess.
 
+    class Meta:
+        managed = False
+        db_table = 'COUNTERPARTY_BENEFIT_OVER_LIST'
 
 class ProcessExpiredRemind(models.Model):
     id = models.TextField(primary_key=True)  # This field type is a guess.
