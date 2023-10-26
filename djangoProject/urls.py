@@ -20,5 +20,5 @@ urlpatterns = [
     path('polls/',include('polls.urls')),
     path('admin/', admin.site.urls),
     path('clientreview/',include('clientreview.urls')),
-    
+    path('ctptypublicinfo/',include('ctptypublicinfo.urls')),
 ]

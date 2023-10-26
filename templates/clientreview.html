@@ -7,7 +7,20 @@
 <body>
     <h1>{{data}}</h1>
     <h2>{{code}}</h2>
-    <button onclick="window.location.href='http://127.0.0.1:8080/clientreview/form'">返回</button>
+    <button onclick="setreviewURL()">返回回访流程生成</button>
+    <button onclick="setpublicURL()">返回公开信息流程生成</button>
 
 </body>
+<script>
+    var host = window.location.host||'127.0.0.1:8080';
+    var pathname = window.location.pathname
+    console.log("host:",host);
+    function setreviewURL(){
+        window.location.href='http://' + host + '/clientreview/form'
+    }
+    function setpublicURL(){
+        window.location.href='http://' + host + '/ctptypublicinfo/form'
+    }
+
+</script>
 </html>

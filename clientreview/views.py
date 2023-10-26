@@ -108,6 +108,8 @@ def startjob(request):
             if user is None or department is None:
                 raise ValueError("该客户经理不存在,请输入中文名称且确认该用户存在")
             # 删除在途流程
+            models.OtcDerivativeCounterparty.objects.filter(corporate_name=reviewflow.corporateName).update(customer_manager=user,
+                                                                                                            introduction_department=department)
             record_list = [record["record_id"] for record in
                            models.ClientReviewRecord.objects.filter(client_name=reviewflow.corporateName).exclude(
                                current_status='CLOSED').values("record_id")]
