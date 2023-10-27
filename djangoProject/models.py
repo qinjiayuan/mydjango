@@ -9,7 +9,7 @@ from __future__ import unicode_literals
 
 from django.db import models
 import django
-# django.setup()
+django.setup()
 class AmlBeneficiary(models.Model):
     id = models.TextField(primary_key=True)  # This field type is a guess.
     entity_type = models.TextField(blank=True, null=True)  # This field type is a guess.
@@ -49,9 +49,9 @@ class AmlCounterparty(models.Model):
     organ_type = models.TextField(blank=True, null=True)  # This field type is a guess.
     capital_account = models.TextField(blank=True, null=True)  # This field type is a guess.
     creator = models.TextField(blank=True, null=True)  # This field type is a guess.
-    create_time = models.DateTimeField(blank=True, null=True)  # This field type is a guess.
+    create_time = models.DateField(blank=True, null=True)  # This field type is a guess.
     updater = models.TextField(blank=True, null=True)  # This field type is a guess.
-    update_time = models.DateTimeField(blank=True, null=True)  # This field type is a guess.
+    update_time = models.DateField(blank=True, null=True)  # This field type is a guess.
     id_no = models.TextField(unique=True)  # This field type is a guess.
     prodname = models.TextField(blank=True, null=True)  # This field type is a guess.
     remark = models.TextField(blank=True, null=True)  # This field type is a guess.

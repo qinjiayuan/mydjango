@@ -44,7 +44,7 @@ def startjob(request):
         customer_manager ,department = public.iscustomerExist()
         print(customer_manager)
         print(department)
-        if  customer_manager is None  and department is None :
+        if  customer_manager is None  and department is None   :
             raise ValueError("该客户经理不存在,请输入中文名称且确认该用户存在")
         #删除存量流程
         models.CtptyInfoUpdateRecord.objects.filter(unifiedsocial_code=public.unifiledsocialcode).exclude(current_status='CLOSED').delete()
