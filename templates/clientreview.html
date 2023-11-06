@@ -7,6 +7,7 @@
 <body>
     <h1>{{data}}</h1>
     <h2>{{code}}</h2>
+<<<<<<< HEAD
 
     <button id="return" onclick="setURL()">返回</button>
 
@@ -23,3 +24,26 @@
 
 </script>
 <!--&lt;!&ndash;    document.getElementById("jiayuan").href = 'http://127.0.0.1:8080/clientreview/form'&ndash;&gt;(a标签才会使用)-->
+=======
+    <button onclick="setreviewURL()">返回回访流程生成</button>
+    <button onclick="setpublicURL()">返回公开信息流程生成</button>
+    <button onclick="setcertURL()">返回证件到期生成</button>
+
+</body>
+<script>
+    var host = window.location.host||'127.0.0.1:8080';
+    var pathname = window.location.pathname
+    console.log("host:",host);
+    function setreviewURL(){
+        window.location.href='http://' + host + '/clientreview/form'
+    }
+    function setpublicURL(){
+        window.location.href='http://' + host + '/ctptypublicinfo/form'
+    }
+    function setcertURL(){
+        window.location.href='http://' + host + '/certificates/form'
+    }
+
+</script>
+</html>
+>>>>>>> 2023/10/25

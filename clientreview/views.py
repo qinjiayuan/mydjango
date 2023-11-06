@@ -1,4 +1,5 @@
 import datetime
+import os
 from datetime import date, datetime
 import jsonpath
 from django.contrib.sites import requests
@@ -13,19 +14,22 @@ from django.utils import log
 from djangoProject.models import ClientReviewDetail, ClientReviewRecord, ClientReviewFileRecord, \
     ClientReviewCounterparty, CounterpartyBenefitOverList
 from django.http import JsonResponse
-
+env = os.environ.get("ENV")
 
 # Create your views here.
 class Clientreviewflow():
 
     def __init__(self, corporateName, customerManager, isnewflow, ):
+<<<<<<< HEAD
 
         self.ENV = '216'
+=======
+>>>>>>> 2023/10/25
         self.corporateName = corporateName
         self.customerManager = customerManager
         self.clientIdList = []
         self.isnewflow = isnewflow
-        self.env = "http://10.2.145.216:9090"
+
 
     # 判断交易对手是否存在
     def isExist(self):
@@ -63,7 +67,7 @@ class Clientreviewflow():
         file_name = ['主体/管理人文件', '32', 'CSRC', 'QCC_CREDIT_RECORD', 'CEIDN', 'QCC_ARBITRATION', 'QCC_AUDIT_INSTITUTION',
                      'CCPAIMIS', 'CC', 'P2P', 'OTHERS', 'NECIPS', 'CJO']
         s3fileid = []
-        url = self.env + "/clientreview/file/upload"
+        url = env + "/clientreview/file/upload"
         headers = {"name": "sunbin"}
         files = {"files": open('D:/djangoProject/clientreview/20220318144757.png', 'rb')}
         for i in range(0, 13):
@@ -104,10 +108,13 @@ def startjob(request):
             if user is None or department is None:
                 raise ValueError("该客户经理不存在,请输入中文名称且确认该用户存在")
             # 删除在途流程
+            models.OtcDerivativeCounterparty.objects.filter(corporate_name=reviewflow.corporateName).update(customer_manager=user,
+                                                                                                            introduction_department=department)
             record_list = [record["record_id"] for record in
                            models.ClientReviewRecord.objects.filter(client_name=reviewflow.corporateName).exclude(
                                current_status='CLOSED').values("record_id")]
             log.info(record_list)
+            log.info("*****************开始生成回访流程*******************")
             models.ClientReviewCounterparty.objects.filter(record_id__in=record_list).delete()
             models.ClientReviewFileRecord.objects.filter(record_id__in=record_list).delete()
             models.ClientReviewDetail.objects.filter(record_id__in=record_list).delete()
@@ -150,7 +157,7 @@ def startjob(request):
                     info_benefit.save()
 
             if 1 < len(procount):
-                multplurl = reviewflow.env + '/clientreview/checkMultipleClient'
+                multplurl = env + '/clientreview/checkMultipleClient'
                 datas = {'checkDateEnd': date.today(),
                          'checkDateStart': date.today(),
                          'uniCodeList': unifiledsocialcode[0]["unifiedsocial_code"]}
@@ -161,7 +168,7 @@ def startjob(request):
                 log.info(responese.json())
                 log.info("多产品的产品客户回访流程创建成功")
             if 1 <= len(orgcount) or len(procount) == 1:
-                singleurl = reviewflow.env + '/clientreview/checkSingleClient'
+                singleurl = env + '/clientreview/checkSingleClient'
                 response1 = requests.post(url=singleurl,
                                           data=datas)
                 log.info("请求url：{}".format(singleurl))
