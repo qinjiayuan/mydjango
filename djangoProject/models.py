@@ -9,14 +9,14 @@ from __future__ import unicode_literals
 
 from django.db import models
 import django
-django.setup()
+# django.setup()
 class AmlBeneficiary(models.Model):
     id = models.TextField(primary_key=True)  # This field type is a guess.
     entity_type = models.TextField(blank=True, null=True)  # This field type is a guess.
     category = models.TextField(unique=True)  # This field type is a guess.
     name = models.TextField(blank=True, null=True)  # This field type is a guess.
     id_kind = models.TextField(blank=True, null=True)  # This field type is a guess.
-    id_no = models.TextField(blank=True, null=True)  # This field type is a guess.
+    id_no = models.TextField(blank=True, null=True,db_index=True)  # This field type is a guess.
     birth = models.TextField(blank=True, null=True)  # This field type is a guess.
     gender = models.TextField(blank=True, null=True)  # This field type is a guess.
     country = models.TextField(blank=True, null=True)  # This field type is a guess.
@@ -43,8 +43,8 @@ class AmlBeneficiary(models.Model):
 
 
 class AmlCounterparty(models.Model):
-    id = models.TextField(primary_key=True)  # This field type is a guess.
-    client_id = models.TextField(blank=True, null=True)  # This field type is a guess.
+    id = models.TextField(primary_key=True,db_index=True)  # This field type is a guess.
+    client_id = models.TextField(blank=True, null=True,db_index=True)  # This field type is a guess.
     client_name = models.TextField(blank=True, null=True)  # This field type is a guess.
     organ_type = models.TextField(blank=True, null=True)  # This field type is a guess.
     capital_account = models.TextField(blank=True, null=True)  # This field type is a guess.
@@ -190,6 +190,7 @@ class ClientReviewCounterparty(models.Model):
     allow_busi_type_his = models.TextField(blank=True, null=True)  # This field type is a guess.
     manual_del_allow_busi_type = models.TextField(blank=True, null=True)  # This field type is a guess.
 
+
     class Meta:
         managed = False
         db_table = 'CLIENT_REVIEW_COUNTERPARTY'
@@ -242,7 +243,7 @@ class ClientReviewRecord(models.Model):
     current_status = models.TextField(blank=True, null=True)  # This field type is a guess.
     current_operator = models.TextField(blank=True, null=True)  # This field type is a guess.
     current_activity_name = models.TextField(blank=True, null=True)  # This field type is a guess.
-    record_id = models.TextField(blank=True, null=True)  # This field type is a guess.
+    record_id = models.TextField(blank=True, null=True,db_index=True)  # This field type is a guess.
     created_datetime = models.DateTimeField(blank=True, null=True)  # This field type is a guess.
     work_phone = models.TextField(blank=True, null=True)  # This field type is a guess.
     phone = models.TextField(blank=True, null=True)  # This field type is a guess.
@@ -269,8 +270,8 @@ class ClientReviewRecord(models.Model):
 
 class CounterpartyOrg(models.Model):
     id = models.TextField(primary_key=True)  # This field type is a guess.
-    corporate_name = models.TextField(blank=True, null=True)  # This field type is a guess.
-    unifiedsocial_code = models.TextField(blank=True, null=True)  # This field type is a guess.
+    corporate_name = models.TextField(blank=True, null=True,db_index=True)  # This field type is a guess.
+    unifiedsocial_code = models.TextField(blank=True, null=True,db_index=True)  # This field type is a guess.
     id_kind = models.TextField(blank=True, null=True)  # This field type is a guess.
     secondray_trader_client = models.TextField(blank=True, null=True)  # This field type is a guess.
     secondray_trader = models.TextField(blank=True, null=True)  # This field type is a guess.
@@ -349,7 +350,7 @@ class CrtExpiredRecord(models.Model):
     current_status = models.TextField(blank=True, null=True)  # This field type is a guess.
     current_operator = models.TextField(blank=True, null=True)  # This field type is a guess.
     current_activity_name = models.TextField(blank=True, null=True)  # This field type is a guess.
-    record_id = models.TextField(blank=True, null=True)  # This field type is a guess.
+    record_id = models.TextField(blank=True, null=True,db_index=True)  # This field type is a guess.
     remind_type = models.TextField(blank=True, null=True)  # This field type is a guess.
     access_user = models.TextField(blank=True, null=True)  # This field type is a guess.
     editable_user = models.TextField(blank=True, null=True)  # This field type is a guess.
@@ -395,9 +396,20 @@ class CtptyInfoUpdateRecord(models.Model):
         managed = False
         db_table = 'CTPTY_INFO_UPDATE_RECORD'
 
+class CrtExpiredRecordUnion(models.Model):
+    id = models.TextField(primary_key=True)
+    client_id = models.TextField(null=True,blank=True)
+    crt_expired_record_id = models.TextField(null=True,blank=True,db_index=True)
+    create_time = models.DateTimeField(null=True,blank=True)
+
+    class  Meta:
+        managed =False
+        db_table = 'CRT_EXPIRED_RECORD_UNION'
+
+
 class OtcDerivativeCounterparty(models.Model):
     id = models.TextField(primary_key=True)  # This field type is a guess.
-    corporate_name = models.TextField(blank=True, null=True)  # This field type is a guess.
+    corporate_name = models.TextField(blank=True, null=True,db_index=True)  # This field type is a guess.
     abbreviation = models.TextField(blank=True, null=True)  # This field type is a guess.
     name_abbreviation = models.TextField(blank=True, null=True)  # This field type is a guess.
     organization_code = models.TextField(blank=True, null=True)  # This field type is a guess.
@@ -447,7 +459,7 @@ class OtcDerivativeCounterparty(models.Model):
     aml_risk_level = models.TextField(blank=True, null=True)  # This field type is a guess.
     registered_capital = models.FloatField(blank=True, null=True)
     is_prod_holder = models.TextField(blank=True, null=True)  # This field type is a guess.
-    client_id = models.TextField(blank=True, null=True)  # This field type is a guess.
+    client_id = models.TextField(blank=True, null=True,db_index=True)  # This field type is a guess.
     client_qualify_review = models.TextField(blank=True, null=True)  # This field type is a guess.
     client_qualify_review_des = models.TextField(blank=True, null=True)  # This field type is a guess.
     client_level = models.TextField(blank=True, null=True)  # This field type is a guess.

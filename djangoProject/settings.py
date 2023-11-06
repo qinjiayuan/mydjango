@@ -30,6 +30,12 @@ ALLOWED_HOSTS = ['*']
 
 # Application definition
 
+#测试环境
+ENV = "http://10.2.145.216:9090"
+#开发环境
+# ENV = ''
+os.environ["ENV"] = ENV
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
