@@ -14,7 +14,7 @@ class AmlBeneficiary(models.Model):
     id = models.TextField(primary_key=True)  # This field type is a guess.
     entity_type = models.TextField(blank=True, null=True)  # This field type is a guess.
     category = models.TextField(unique=True)  # This field type is a guess.
-    name = models.TextField(blank=True, null=True)  # This field type is a guess.
+    name = models.TextField(blank=True, null=True,db_index=True)  # This field type is a guess.
     id_kind = models.TextField(blank=True, null=True)  # This field type is a guess.
     id_no = models.TextField(blank=True, null=True,db_index=True)  # This field type is a guess.
     birth = models.TextField(blank=True, null=True)  # This field type is a guess.
@@ -602,3 +602,25 @@ class ProcessExpiredRemind(models.Model):
     class Meta:
         managed = False
         db_table = 'PROCESS_EXPIRED_REMIND'
+class CrtExpiredPersonRecord(models.Model):
+    id =  models.TextField(primary_key=True)
+    crt_expired_record_id = models.TextField(blank=False,null=False,db_index=True)
+    aml_beneficiary_id = models.TextField(blank=True,null=True)
+    file_record_id = models.TextField(blank=True,null=True)
+    handle_type = models.TextField(blank=True,null=True)
+    otc_deriv_ctpty_id = models.TextField(blank=True,null=True)
+    valid_date_start_old = models.TextField(blank=True,null=True)
+    valid_date_end_old = models.DateField(blank=True,null=True)
+    valid_date_start_new = models.DateField(blank=True,null=True)
+    valid_date_end_new = models.DateField(blank=True,null=True)
+    created_datetime = models.DateField(blank=True,null=True)
+    entity_type = models.TextField(blank=True,null=True)
+    name = models.TextField(blank=True,null=True)
+    id_kind = models.TextField(blank=True,null=True)
+    id_no = models.TextField(blank=True,null=True)
+    entity_id = models.TextField(blank=True,null=True)
+    category = models.TextField(blank=True,null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'CRT_EXPIRED_PERSON_RECORD'

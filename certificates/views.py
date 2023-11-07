@@ -125,11 +125,12 @@ class certificates():
                 existbeneficiary = list(
                     filter(lambda x: len(models.AmlBeneficiary.objects.filter(counterparty_id=x, category='1').values())!= 0,
                            existscounterpartyid))
-                log.info("输出existbeneficiary")
+
                 nonexistbeneficiary = list(filter(lambda y: y not in existbeneficiary, existscounterpartyid))
 
                 models.AmlBeneficiary.objects.filter(counterparty_id__in=existbeneficiary, category='1').update(
                     id_validdate_end=id_validdate_end)
+                #对不存在受益人的进行操作
                 for abvs in nonexistbeneficiary:
                     log.info(abvs)
                     beneificiary1 = AmlBeneficiary(name='回访9527',
@@ -145,7 +146,14 @@ class certificates():
                                                    category='1')
                     log.info("新更改的身份证:{}".format(beneificiary1["id"]))
                     beneificiary1.save()
-            log.info("受益人已成功添加")
+                    log.info("受益人已成功添加")
+                for newperson in existbeneficiary :
+                    models.AmlBeneficiary.objects.filter(category='1',counterparty_id=newperson).update(name='回访9527',
+                                                                                                        id_no=self.getidno(),
+                                                                                                        id_validdate_end=id_validdate_end,
+                                                                                                        birth='1990-10-10',
+                                                                                                        id_validdate_start='1990-10-10')
+
         except Exception as e:
             log.info(str(e))
 
@@ -172,36 +180,48 @@ def startjob(request):
             #更改客户经理
             models.OtcDerivativeCounterparty.objects.filter(corporate_name=corporatename).update(customer_manager=user,
                                                                                                  introduction_department=department)
-            #找出所有client_id
-            clientIdlist = models.OtcDerivativeCounterparty.objects.filter(corporate_name =corporatename).values_list('client_id',flat=True)
-            # log.info("clientIdList is {}".format(clientIdlist))
-            recordIdlist = models.CrtExpiredRecordUnion.objects.filter(client_id__in=clientIdlist).values("crt_expired_record_id").distinct()
-            # log.info("recordIdlist is {}".format(recordIdlist))
-            log.info("未过滤之前的长度{}".format(len(recordIdlist)))
+            #通过证件来找到在途流程并且进行更改
+            counterpartyId = [id["id"] for id in models.AmlCounterparty.objects.filter(client_name=corporatename).all().values("id")]
+            log.info("counterpartyId is :{}".format(counterpartyId))
+            if counterpartyId :
+                idno = [idno["id_no"] for idno in models.AmlBeneficiary.objects.filter(category='1',
+                                                                                       counterparty_id__in=counterpartyId,
+                                                                                       name='回访9527').values('id_no')]
+                recordList = [record['crt_expired_record_id'] for record in models.CrtExpiredPersonRecord.objects.filter(id_no__in=idno).values('crt_expired_record_id')]
+                models.CrtExpiredRecord.objects.filter(record_id__in=recordList).update(current_status='CLOSED')
 
-            # needdealrecordid = list(filter(lambda record : models.CrtExpiredRecord.objects.filter(current_status="PROCESSING",
-            #                                                                                          record_id=record).values() is not None,recordIdlist ))
-            needdealrecordid = list(
-                filter(lambda record: models.CrtExpiredRecord.objects.filter(current_status="PROCESSING",
-                                                                             record_id=record).values("record_id") is not None,
-                       recordIdlist))
-            log.info('过滤后的长度{}'.format(len(needdealrecordid)))
-            log.info('lambda')
-            print(needdealrecordid)
 
-            # noncounterpartList = list(
-            #     filter(lambda client: len(models.AmlCounterparty.objects.filter(client_id=client).values()) == 0,
-            #            clientidList))
+            '''
+            for id in counterpartyId:
+                firstbeneficiary = [id["id_no"] for id in models.AmlBeneficiary.objects.filter(counterparty_id=id,
+                                                                        category='1',
+                                                                        name='回访9527').values("id_no")]
+                log.info("firstbeneficiary is :".format(firstbeneficiary))
+                if firstbeneficiary:
+                    recordId = [record["crt_expired_record_id"] for record in models.CrtExpiredPersonRecord.objects.filter(id_no=firstbeneficiary[0],
+                                                                            name='回访9527',
+                                                                            category='1').values("crt_expired_record_id")]
+                    log.info("firstbeneficiary is :".format(recordId))
+                    if recordId:
+                        needdealrecordid = list(filter(lambda recordid : 'PROCESSING' == [status['current_status'] for status in models.CrtExpiredRecord.objects.filter(
+                        record_id=recordid).values_list('record_id',flat=True)][0],recordId))
+                        log.info("recordId is :".format(needdealrecordid))
+                        log.info('需要处理的record:{}'.format(needdealrecordid))
+
+                        models.CrtExpiredRecord.objects.filter(record_id=recordId).udpate(current_status='CLOSED')
+'''
+
+
 
             unifiedsocialcode = [item["unifiedsocial_code"] for item in models.OtcDerivativeCounterparty.objects.filter(corporate_name=corporatename).all().values("unifiedsocial_code")][0]
-            models.CrtExpiredRecord.objects.filter(record_id__in=needdealrecordid).delete()
+            models.CrtExpiredRecord.objects.filter(unifiedsocial_code=unifiedsocialcode).exclude(current_status='CLOSED').delete()
             url = env + '/certificates/expired/NATURE_PERSON'
             params = {"checkDate":date.today(),
                       "unifiedsocialCodeList":unifiedsocialcode}
             log.info("request paramas is {}".format(params))
             responsed = requests.post(url=url,
                                      data=params)
-            return render(request,'clientreview.html',{"data": responsed.json(), 'code': '500'})
+            return render(request,'clientreview.html',{"data":responsed.json(), 'code': '500'})
 
         else:
             raise ValueError("该机构不存在")
