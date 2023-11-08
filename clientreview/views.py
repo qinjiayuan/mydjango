@@ -99,7 +99,7 @@ def startjob(request):
                  'CCPAIMIS', 'CC', 'P2P', 'OTHERS', 'NECIPS', 'CJO']
     try:
         if reviewflow.isExist():
-            user, department = reviewflow.iscustomerExist();
+            user, department = reviewflow.iscustomerExist()
             if user is None or department is None:
                 raise ValueError("该客户经理不存在,请输入中文名称且确认该用户存在")
             # 删除在途流程
@@ -195,15 +195,14 @@ def startjob(request):
                         else models.ClientReviewRecord.objects.filter(record_id=newrecordid).update(
                         accounting_firm_name='测试专用', version='202210')
                     models.ClientReviewRecord.objects.filter(record_id=newrecordid).update(
-                        sale_person="renyu") if reviewflow.ENV == '216' \
-                        else models.ClientReviewRecord.objects.filter(record_id=newrecordid).update(
                         sale_person="renyu")
                     for i in range(len(s3fileidList)):
                         models.ClientReviewFileRecord.objects.filter(s3_file_id=s3fileidList[i]).update(
                             record_id=newrecordid,
                             file_belong=file_name[i])
-
+                log.info("**********************生成回访流程结束**************************")
                 return render(request, 'clientreview.html', {"data": response1.json(), 'code': '200'})
+
         return render(request, 'clientreview.html', {"data": "客户经理或者机构不存在", "code": "500"})
     except Exception as e:
         log.info("error is {}".format(e))

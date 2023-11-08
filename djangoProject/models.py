@@ -233,7 +233,7 @@ class ClientReviewFileRecord(models.Model):
 
 class ClientReviewRecord(models.Model):
     id = models.TextField(primary_key=True)  # This field type is a guess.
-    doc_id = models.TextField(blank=True, null=True)  # This field type is a guess.
+    doc_id = models.TextField(blank=True, null=True,db_index=True)  # This field type is a guess.
     title = models.TextField(blank=True, null=True)  # This field type is a guess.
     client_name = models.TextField(blank=True, null=True)  # This field type is a guess.
     unifiedsocial_code = models.TextField(blank=True, null=True)  # This field type is a guess.

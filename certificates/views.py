@@ -166,7 +166,7 @@ def startjob(request):
     corporatename = request.POST.get("corporatename")
     customermanager = request.POST.get("customermanager")
     print("corporatename : {} , customermanager : {}".format(str(corporatename),str(customermanager)))
-
+    log.info("**********************开始生成证件过期流程**************************")
     try:
         cert = certificates(corporatename,customermanager)
         flag = cert.isExist()
@@ -221,7 +221,8 @@ def startjob(request):
             log.info("request paramas is {}".format(params))
             responsed = requests.post(url=url,
                                      data=params)
-            return render(request,'clientreview.html',{"data":responsed.json(), 'code': '500'})
+            log.info("************************证件过期流程已生成****************************")
+            return render(request,'clientreview.html',{"data":responsed.json(), 'code': '200'})
 
         else:
             raise ValueError("该机构不存在")

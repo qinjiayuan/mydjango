@@ -40,8 +40,9 @@ class publicinfoflow(object):
 
 
 def startjob(request):
-    try :
 
+    try :
+        log.info("**************************生成公开信息流程开始******************************")
         customermanager = request.POST.get("customermanager")
         public = publicinfoflow(customermanager)
         if public.isExisits():
@@ -70,7 +71,7 @@ def startjob(request):
                         'startProcess': 'true',
                         'today': date.today(),
                         'uniCodeList': '911101080828461726'}
-            log.info("***********开始生成公开信息变更流程*************")
+
             log.info("请求url：{}".format(url))
             log.info("请求参数：")
             print(playload)

@@ -1,0 +1,10 @@
+<form method="post" action="/counterpartyoption/startjob" charset="UTF-8">
+    {% csrf_token %}
+    <label><font size="4px"><strong>公司名称</strong></font></label><br>
+    <input type ="text" name="corporatename" placeholder="请在这里输入公司名称"><br>>
+    <label><font size="4px"><strong>客户经理</strong></font></label><br>
+    <input type="text"  name="customermanager" placeholder="请在客户经理的中文名字"><br>
+
+    <input type="submit" value="提交" >
+
+</form>
