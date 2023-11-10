@@ -5,7 +5,7 @@ from random import random
 
 import requests
 from django.shortcuts import render
-from django.http import  HttpResponse,request
+from django.http import  HttpResponse,request,JsonResponse
 from djangoProject.models import OtcDerivativeCounterparty,AmlCounterparty,AmlBeneficiary,CrtExpiredRecord
 from django.utils import log
 import random
@@ -66,7 +66,8 @@ class certificates():
     def add_Beneficiary(self,corporatename):
 
         try:
-            date = datetime.today() + timedelta(days=30)
+
+            date = datetime.today() - timedelta(days=27)
             id_validdate_end = datetime.strftime(date, '%Y-%m-%d')
             log.info('流程发起时间:{}'.format(id_validdate_end))
 
@@ -190,29 +191,6 @@ def startjob(request):
                 recordList = [record['crt_expired_record_id'] for record in models.CrtExpiredPersonRecord.objects.filter(id_no__in=idno).values('crt_expired_record_id')]
                 models.CrtExpiredRecord.objects.filter(record_id__in=recordList).update(current_status='CLOSED')
 
-
-            '''
-            for id in counterpartyId:
-                firstbeneficiary = [id["id_no"] for id in models.AmlBeneficiary.objects.filter(counterparty_id=id,
-                                                                        category='1',
-                                                                        name='回访9527').values("id_no")]
-                log.info("firstbeneficiary is :".format(firstbeneficiary))
-                if firstbeneficiary:
-                    recordId = [record["crt_expired_record_id"] for record in models.CrtExpiredPersonRecord.objects.filter(id_no=firstbeneficiary[0],
-                                                                            name='回访9527',
-                                                                            category='1').values("crt_expired_record_id")]
-                    log.info("firstbeneficiary is :".format(recordId))
-                    if recordId:
-                        needdealrecordid = list(filter(lambda recordid : 'PROCESSING' == [status['current_status'] for status in models.CrtExpiredRecord.objects.filter(
-                        record_id=recordid).values_list('record_id',flat=True)][0],recordId))
-                        log.info("recordId is :".format(needdealrecordid))
-                        log.info('需要处理的record:{}'.format(needdealrecordid))
-
-                        models.CrtExpiredRecord.objects.filter(record_id=recordId).udpate(current_status='CLOSED')
-'''
-
-
-
             unifiedsocialcode = [item["unifiedsocial_code"] for item in models.OtcDerivativeCounterparty.objects.filter(corporate_name=corporatename).all().values("unifiedsocial_code")][0]
             models.CrtExpiredRecord.objects.filter(unifiedsocial_code=unifiedsocialcode).exclude(current_status='CLOSED').delete()
             url = env + '/certificates/expired/NATURE_PERSON'
@@ -232,3 +210,70 @@ def startjob(request):
 def form(request):
     return render(request,'certexpired.html')
 
+
+def startjob1(request):
+    corporatename = request.POST.get("corporatename")
+    customermanager = request.POST.get("customermanager")
+    print("corporatename : {} , customermanager : {}".format(str(corporatename),str(customermanager)))
+    log.info("**********************开始生成证件过期流程**************************")
+    try:
+        cert = certificates(corporatename,customermanager)
+        flag = cert.isExist()
+        if flag :
+            user , department = cert.iscustomerExist()
+            if  user is None or department is None :
+                raise ValueError("该客户经理不存在,请输入中文名称且确认该用户存在")
+
+           #先处理受益人信息
+            cert.add_Beneficiary(corporatename)
+            #更改客户经理
+            models.OtcDerivativeCounterparty.objects.filter(corporate_name=corporatename).update(customer_manager=user,
+                                                                                                 introduction_department=department)
+            #通过证件来找到在途流程并且进行更改
+            counterpartyId = [id["id"] for id in models.AmlCounterparty.objects.filter(client_name=corporatename).all().values("id")]
+            log.info("counterpartyId is :{}".format(counterpartyId))
+            if counterpartyId :
+                idno = [idno["id_no"] for idno in models.AmlBeneficiary.objects.filter(category='1',
+                                                                                       counterparty_id__in=counterpartyId,
+                                                                                       name='回访9527').values('id_no')]
+                recordList = [record['crt_expired_record_id'] for record in models.CrtExpiredPersonRecord.objects.filter(id_no__in=idno).values('crt_expired_record_id')]
+                models.CrtExpiredRecord.objects.filter(record_id__in=recordList).update(current_status='CLOSED')
+
+
+
+
+
+            unifiedsocialcode = [item["unifiedsocial_code"] for item in models.OtcDerivativeCounterparty.objects.filter(corporate_name=corporatename).all().values("unifiedsocial_code")][0]
+            models.CrtExpiredRecord.objects.filter(unifiedsocial_code=unifiedsocialcode).exclude(current_status='CLOSED').delete()
+            url = env + '/certificates/expired/NATURE_PERSON'
+            params = {"checkDate":date.today(),
+                      "unifiedsocialCodeList":unifiedsocialcode}
+            log.info("request paramas is {}".format(params))
+            responsed = requests.post(url=url,
+                                     data=params)
+            log.info(responsed.json())
+
+            title = {}
+            titleList = [title['title'] for title in models.CrtExpiredRecord.objects.filter(unifiedsocial_code=unifiedsocialcode).exclude(current_status__in=['CLOSED','CANCELLED']).values("title")]
+            log.info("title1 is {}".format(title))
+            for i in range(len(titleList)):
+                title["title{}".format(i+1)] = titleList[i]
+
+            log.info("已经执行完循环了")
+            log.info("****************************证件过期流程已生成*************************")
+            return JsonResponse({"status":"successfully",
+                                 "data":title,
+                                 "code":'200'}
+                                )
+
+        else:
+            return JsonResponse({"status": "failed",
+                                 "error": "{}不存在".format(corporatename),
+                                 "code": '500'}
+                                )
+    except Exception as e :
+        log.info(str(e))
+        return JsonResponse({"status": "failed",
+                             "error": str(e),
+                             "code": '500'}
+                            )

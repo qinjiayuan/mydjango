@@ -234,7 +234,7 @@ class ClientReviewFileRecord(models.Model):
 class ClientReviewRecord(models.Model):
     id = models.TextField(primary_key=True)  # This field type is a guess.
     doc_id = models.TextField(blank=True, null=True,db_index=True)  # This field type is a guess.
-    title = models.TextField(blank=True, null=True)  # This field type is a guess.
+    title = models.TextField(blank=True, null=True,db_index=True)  # This field type is a guess.
     client_name = models.TextField(blank=True, null=True)  # This field type is a guess.
     unifiedsocial_code = models.TextField(blank=True, null=True)  # This field type is a guess.
     review_date = models.DateTimeField(blank=True, null=True)  # This field type is a guess.
@@ -344,7 +344,7 @@ class CounterpartyProdMonitorFlow(models.Model):
 class CrtExpiredRecord(models.Model):
     id = models.TextField(primary_key=True)  # This field type is a guess.
     doc_id = models.TextField(blank=True, null=True)  # This field type is a guess.
-    title = models.TextField(unique=True)  # This field type is a guess.
+    title = models.TextField(unique=True,db_index=True)  # This field type is a guess.
     client_id = models.TextField(blank=True, null=True)  # This field type is a guess.
     check_date = models.DateTimeField(unique=True)  # This field type is a guess.
     current_status = models.TextField(blank=True, null=True)  # This field type is a guess.

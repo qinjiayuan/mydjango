@@ -22,5 +22,7 @@ urlpatterns = [
     path('clientreview/',include('clientreview.urls')),
     path('ctptypublicinfo/',include('ctptypublicinfo.urls')),
     path('certificates/',include("certificates.urls")),
-    path('counterpartyoption/',include('counterpartyoption.urls'))
+    path('counterpartyoption/',include('counterpartyoption.urls')),
+    path('processexpired/',include('processexpired.urls')),
+
 ]

@@ -10,6 +10,7 @@
     <button onclick="setreviewURL()">返回回访流程生成</button>
     <button onclick="setpublicURL()">返回公开信息流程生成</button>
     <button onclick="setcertURL()">返回证件到期生成</button>
+    <button onclick="setoptionURL()">返回期权产品监测流程生成</button>
 
 </body>
 <script>
@@ -24,6 +25,9 @@
     }
     function setcertURL(){
         window.location.href='http://' + host + '/certificates/form'
+    }
+    function setoptionURL(){
+        window.location.href='http://' + host + '/counterpartyoption/form'
     }
 
 </script>
