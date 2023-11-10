@@ -11,7 +11,7 @@ from django.utils import log
 import random
 from djangoProject import models
 from os import environ
-env = os.environ.get("ENV")
+ENV = os.environ.get("ENV")
 # Create your views here.
 class certificates():
     def __init__(self,corporatename,customermanager):
@@ -166,6 +166,8 @@ class certificates():
 def startjob(request):
     corporatename = request.POST.get("corporatename")
     customermanager = request.POST.get("customermanager")
+    env = request.POST.get("env")
+    enviroment = ENV if env is None or '' else ("http://" + env )
     print("corporatename : {} , customermanager : {}".format(str(corporatename),str(customermanager)))
     log.info("**********************开始生成证件过期流程**************************")
     try:
@@ -193,7 +195,7 @@ def startjob(request):
 
             unifiedsocialcode = [item["unifiedsocial_code"] for item in models.OtcDerivativeCounterparty.objects.filter(corporate_name=corporatename).all().values("unifiedsocial_code")][0]
             models.CrtExpiredRecord.objects.filter(unifiedsocial_code=unifiedsocialcode).exclude(current_status='CLOSED').delete()
-            url = env + '/certificates/expired/NATURE_PERSON'
+            url = enviroment + '/certificates/expired/NATURE_PERSON'
             params = {"checkDate":date.today(),
                       "unifiedsocialCodeList":unifiedsocialcode}
             log.info("request paramas is {}".format(params))
@@ -214,6 +216,8 @@ def form(request):
 def startjob1(request):
     corporatename = request.POST.get("corporatename")
     customermanager = request.POST.get("customermanager")
+    env = request.POST.get("env")
+    enviroment = ENV if env is None or '' else ("http://" + env)
     print("corporatename : {} , customermanager : {}".format(str(corporatename),str(customermanager)))
     log.info("**********************开始生成证件过期流程**************************")
     try:
@@ -245,7 +249,7 @@ def startjob1(request):
 
             unifiedsocialcode = [item["unifiedsocial_code"] for item in models.OtcDerivativeCounterparty.objects.filter(corporate_name=corporatename).all().values("unifiedsocial_code")][0]
             models.CrtExpiredRecord.objects.filter(unifiedsocial_code=unifiedsocialcode).exclude(current_status='CLOSED').delete()
-            url = env + '/certificates/expired/NATURE_PERSON'
+            url = enviroment + '/certificates/expired/NATURE_PERSON'
             params = {"checkDate":date.today(),
                       "unifiedsocialCodeList":unifiedsocialcode}
             log.info("request paramas is {}".format(params))

@@ -14,7 +14,7 @@ from djangoProject import logger
 from djangoProject.models import ClientReviewDetail, ClientReviewRecord, ClientReviewFileRecord, \
     ClientReviewCounterparty, CounterpartyBenefitOverList
 from django.http import JsonResponse
-env = os.environ.get("ENV")
+ENV = os.environ.get("ENV")
 
 # Create your views here.
 class Clientreviewflow():
@@ -58,7 +58,8 @@ class Clientreviewflow():
         return customerManager, department
 
     # 调用后端接口上传附件获取s3Fileid
-    def gets3fileid(self):
+    def gets3fileid(self,env):
+
         file_name = ['主体/管理人文件', '32', 'CSRC', 'QCC_CREDIT_RECORD', 'CEIDN', 'QCC_ARBITRATION', 'QCC_AUDIT_INSTITUTION',
                      'CCPAIMIS', 'CC', 'P2P', 'OTHERS', 'NECIPS', 'CJO']
         s3fileid = []
@@ -91,6 +92,8 @@ def startjob(request):
     corporateName = request.POST.get('corporatename')
     customermanager = request.POST.get('customermanager')
     isnew = request.POST.get('isnew')
+    env = request.POST.get("env")
+    enviroment = ENV if env is None or '' else ("http://" + env)
     print(corporateName)
     print(customermanager)
     print(isnew)
@@ -155,7 +158,7 @@ def startjob(request):
                      'checkDateStart': date.today(),
                      'uniCodeList': unifiledsocialcode[0]["unifiedsocial_code"]}
             if 1 < len(procount):
-                multplurl = env + '/clientreview/checkMultipleClient'
+                multplurl = enviroment + '/clientreview/checkMultipleClient'
 
                 log.info("请求 url:{}".format(multplurl))
                 log.info("paramas is:" + str(datas))
@@ -164,7 +167,7 @@ def startjob(request):
                 log.info(responese.json())
                 log.info("多产品的产品客户回访流程创建成功")
             if 1 <= len(orgcount) or len(procount) == 1:
-                singleurl = env + '/clientreview/checkSingleClient'
+                singleurl = enviroment + '/clientreview/checkSingleClient'
                 response1 = requests.post(url=singleurl,
                                           data=datas)
                 log.info("请求url：{}".format(singleurl))
@@ -177,7 +180,7 @@ def startjob(request):
                                  "record_id")]
                 log.info('recordid列表:{}'.format(flow_list))
                 for newrecordid in flow_list:
-                    s3fileidList = reviewflow.gets3fileid()
+                    s3fileidList = reviewflow.gets3fileid(enviroment)
                     obj = ClientReviewDetail(id=reviewflow.getid(),
                                              record_id=newrecordid,
                                              client_name='11',
@@ -219,6 +222,8 @@ def startjob1(request):
     corporateName = request.POST.get('corporatename')
     customermanager = request.POST.get('customermanager')
     isnew = request.POST.get('isnew')
+    env = request.POST.get("env")
+    enviroment = ENV if env is None or '' else ("http://" + env)
     print(corporateName)
     print(customermanager)
     print(isnew)
@@ -282,7 +287,7 @@ def startjob1(request):
                      'checkDateStart': date.today(),
                      'uniCodeList': unifiledsocialcode[0]["unifiedsocial_code"]}
             if 1 < len(procount):
-                multplurl = env + '/clientreview/checkMultipleClient'
+                multplurl = enviroment + '/clientreview/checkMultipleClient'
 
                 log.info("请求 url:{}".format(multplurl))
                 log.info("paramas is:" + str(datas))
@@ -291,7 +296,7 @@ def startjob1(request):
                 log.info(responese.json())
                 log.info("多产品的产品客户回访流程创建成功")
             if 1 <= len(orgcount) or len(procount) == 1:
-                singleurl = env + '/clientreview/checkSingleClient'
+                singleurl = enviroment + '/clientreview/checkSingleClient'
                 response1 = requests.post(url=singleurl,
                                           data=datas)
                 log.info("请求url：{}".format(singleurl))
@@ -304,7 +309,7 @@ def startjob1(request):
                                  "record_id")]
                 log.info('recordid列表:{}'.format(flow_list))
                 for newrecordid in flow_list:
-                    s3fileidList = reviewflow.gets3fileid()
+                    s3fileidList = reviewflow.gets3fileid(enviroment)
                     obj = ClientReviewDetail(id=reviewflow.getid(),
                                              record_id=newrecordid,
                                              client_name='11',

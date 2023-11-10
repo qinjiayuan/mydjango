@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-(=^k+_swcx(q*e^0w6wqlip-5x+#-35a@y^qc4@-p_o)g9f*th
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['*','10.50.90.13']
 
 # Application definition
 
@@ -126,7 +126,47 @@ LOGGING = {
     },
 }
 
-
+# # 日志配置
+# LOGGING = {
+#     'version': 1,
+#     'disable_existing_loggers': False,  # 是否禁用已经存在的日志器
+#     'formatters': {  # 日志信息显示的格式
+#         'verbose': {  # 详细数据
+#             'format': '%(levelname)s %(asctime)s %(module)s %(lineno)d %(message)s'
+#         },
+#         'simple': {
+#             'format': '%(levelname)s %(module)s %(lineno)d %(message)s'
+#         },
+#     },
+#     'filters': {  # 对日志进行过滤
+#         'require_debug_true': {  # django在debug模式下才输出日志
+#             '()': 'django.utils.log.RequireDebugTrue',
+#         },
+#     },
+#     'handlers': {  # 日志处理方法
+#         'console': {  # 向终端中输出日志
+#             'level': 'DEBUG',
+#             'filters': ['require_debug_true'],
+#             'class': 'logging.StreamHandler',
+#             'formatter': 'simple'
+#         },
+#         'file': {  # 向文件中输出日志
+#             'level': 'DEBUG',
+#             'class': 'logging.handlers.RotatingFileHandler',
+#             'filename': LOG_PATH / f'error-{time.strftime("%Y-%m-%d")}.log',  # 日志文件的位置
+#             'maxBytes': 300 * 1024 * 1024,  # 每个文件最大存储300M 多了输出到新的文件
+#             'backupCount': 10,
+#             'formatter': 'verbose'
+#         },
+#     },
+#     'loggers': {  # 日志器
+#         'django': {  # 定义了一个名为django的日志器
+#             'handlers': ['console', 'file'],  # 可以同时向终端与文件中输出日志
+#             'propagate': True,  # 是否继续传递日志信息
+#             'level': 'DEBUG',  # 日志器接收的最低日志级别
+#         },
+#     }
+# }
 
 
 TEMPLATES = [
@@ -156,7 +196,7 @@ CORS_ORIGIN_ALLOW_ALL = True
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 #测试环境
-ENV = "http://10.2.145.217:9090"
+ENV = "http://10.2.145.216:9090"
 #开发环境
 # ENV = ''
 os.environ["ENV"] = ENV
@@ -165,10 +205,10 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.oracle',
         'USER': 'gf_otc',
-        'PASSWORD': 'otc_123456',
-        'HOST': '10.128.4.166',
+        'PASSWORD': 'otc1qazXSW@',
+        'HOST': '10.62.146.18',
         'PORT': '1521',
-        'NAME': 'testdb'
+        'NAME': 'jgjtest'
     }
 }
 
