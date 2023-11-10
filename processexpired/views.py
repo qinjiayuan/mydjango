@@ -11,7 +11,7 @@ from django.db.models import Q
 # #创建到期流程的数据
 from djangoProject.models import AmlCounterparty, AmlBeneficiary, CounterpartyBenefitOverList, ClientReviewDetail
 
-env = os.environ.get("ENV")
+ENV = os.environ.get("ENV")
 
 
 
@@ -119,11 +119,12 @@ class Clientreviewflow():
         return customerManager, department
 
     # 调用后端接口上传附件获取s3Fileid
-    def gets3fileid(self):
+    def gets3fileid(self,enviroment):
+
         file_name = ['主体/管理人文件', '32', 'CSRC', 'QCC_CREDIT_RECORD', 'CEIDN', 'QCC_ARBITRATION', 'QCC_AUDIT_INSTITUTION',
                      'CCPAIMIS', 'CC', 'P2P', 'OTHERS', 'NECIPS', 'CJO']
         s3fileid = []
-        url = env + "/clientreview/file/upload"
+        url = enviroment + "/clientreview/file/upload"
         headers = {"name": "sunbin"}
         files = {"files": open('D:/djangoProject/clientreview/20220318144757.png', 'rb')}
         for i in range(0, 13):
@@ -293,7 +294,7 @@ class certificates():
         except Exception as e:
             log.info(str(e))
 
-def certificatesjob(request,corporatename,customermanager,expired):
+def certificatesjob(request,corporatename,customermanager,expired,enviroment):
 
     print("corporatename : {} , customermanager : {}".format(str(corporatename), str(customermanager)))
     log.info("**********************开始生成证件过期流程**************************")
@@ -327,7 +328,7 @@ def certificatesjob(request,corporatename,customermanager,expired):
                 corporate_name=corporatename).all().values("unifiedsocial_code")][0]
             models.CrtExpiredRecord.objects.filter(unifiedsocial_code=unifiedsocialcode).exclude(
                 current_status='CLOSED').delete()
-            url = env + '/certificates/expired/NATURE_PERSON'
+            url = enviroment + '/certificates/expired/NATURE_PERSON'
             params = {"checkDate": date.today(),
                       "unifiedsocialCodeList": unifiedsocialcode}
             log.info("request paramas is {}".format(params))
@@ -362,7 +363,7 @@ def certificatesjob(request,corporatename,customermanager,expired):
                             )
 
 
-def publicinfojob(request,corporatename,customermanager,expired):
+def publicinfojob(request,corporatename,customermanager,expired,enviroment):
 
     try :
         log.info("**************************生成公开信息流程开始******************************")
@@ -389,7 +390,7 @@ def publicinfojob(request,corporatename,customermanager,expired):
             models.OtcDerivativeCounterparty.objects.filter(unifiedsocial_code=public.unifiledsocialcode).update(customer_manager=customer_manager,
                                                                                                                  introduction_department=department,
                                                                                                                  aml_monitor_flag='true')
-            url = env+'/ctptyInfoUpdate/remind/check'
+            url = enviroment+'/ctptyInfoUpdate/remind/check'
             playload = {'checkDayAfter': '2010-10-10',
                         'checkDbData': 'false',
                         'checkInDate': '2022-08-31',
@@ -443,7 +444,7 @@ def publicinfojob(request,corporatename,customermanager,expired):
 
 
 #直接返回json报文
-def reviewjob(request,corporateName,customermanager,expired):
+def reviewjob(request,corporateName,customermanager,expired,enviroment):
 
     isnew = '1'
     print(corporateName)
@@ -498,7 +499,6 @@ def reviewjob(request,corporateName,customermanager,expired):
                                                                name='测试',
                                                                id_no='1928382942342',
                                                                proportion='88',
-                                                               id=reviewflow.getid(),
                                                                professional_investor_flag='1',
                                                                invest_3year_exp_flag='1',
                                                                financial_assets_of_lastyear='1',
@@ -509,7 +509,7 @@ def reviewjob(request,corporateName,customermanager,expired):
                      'checkDateStart': date.today(),
                      'uniCodeList': unifiledsocialcode[0]["unifiedsocial_code"]}
             if 1 < len(procount):
-                multplurl = env + '/clientreview/checkMultipleClient'
+                multplurl = enviroment + '/clientreview/checkMultipleClient'
 
                 log.info("请求 url:{}".format(multplurl))
                 log.info("paramas is:" + str(datas))
@@ -518,7 +518,7 @@ def reviewjob(request,corporateName,customermanager,expired):
                 log.info(responese.json())
                 log.info("多产品的产品客户回访流程创建成功")
             if 1 <= len(orgcount) or len(procount) == 1:
-                singleurl = env + '/clientreview/checkSingleClient'
+                singleurl = enviroment + '/clientreview/checkSingleClient'
                 response1 = requests.post(url=singleurl,
                                           data=datas)
                 log.info("请求url：{}".format(singleurl))
@@ -588,7 +588,7 @@ def reviewjob(request,corporateName,customermanager,expired):
                              "code":"500"})
 
 
-def optionjob(request,corporatename,customermanager,expired):
+def optionjob(request,corporatename,customermanager,expired,enviroment):
 
     publicinfo = Option(corporatename,customermanager)
     try:
@@ -623,7 +623,7 @@ def optionjob(request,corporatename,customermanager,expired):
                 today = datetime.now()
                 current_date= datetime.strftime(today,'%Y-%m-%d')
                 for client in publicinfo.getClientid():
-                    url = env + '/api/test/optionProdMonitor'
+                    url = enviroment + '/api/test/optionProdMonitor'
                     params = {"clientId": client, "date": current_date}
                     log.info("params is {}".format(params))
                     response = requests.get(url=url, params=params)
@@ -663,21 +663,23 @@ def processexpiredjob(request):
         corporateName = request.POST.get('corporatename')
         customermanager = request.POST.get('customermanager')
         expired = request.POST.get("expired")
+        env = request.POST.get('env')
+        enviroment = ENV if env is None or '' else ("http://" + env)
         indata= {}
         indata["corporateName"]=corporateName
         indata['customermanager'] = customermanager
         indata['expired'] = expired
         log.info("接受到的参数为{}".format(indata))
-        certificatesjob(request,corporateName,customermanager,expired)
-        publicinfojob(request,corporateName,customermanager,expired)
-        reviewjob(request,corporateName,customermanager,expired)
-        optionjob(request,corporateName,customermanager,expired)
+        certificatesjob(request,corporateName,customermanager,expired,enviroment)
+        publicinfojob(request,corporateName,customermanager,expired,enviroment)
+        # reviewjob(request,corporateName,customermanager,expired,enviroment)
+        optionjob(request,corporateName,customermanager,expired,enviroment)
 
 
 
         #触发下到期提醒
         log.info("*********************开始触发即将到期提醒*********************")
-        url = env + "/api/manualTriggerJob/1.0.0/processExpiredRemindJob"
+        url = enviroment + "/api/manualTriggerJob/1.0.0/processExpiredRemindJob"
         params = {'trigger4ProcessType': ''}
         response = requests.post(url=url, data=params)
         log.info(response.json())

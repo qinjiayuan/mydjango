@@ -12,7 +12,7 @@ import os ,django
 from datetime import date , datetime
 # Create your views here.
 import json
-env = os.environ.get('ENV')
+ENV = os.environ.get('ENV')
 class publicinfoflow(object):
 
     def __init__(self,customerManager):
@@ -47,6 +47,8 @@ def startjob(request):
     try :
         log.info("**************************生成公开信息流程开始******************************")
         customermanager = request.POST.get("customermanager")
+        env = request.POST.get('env')
+        enviroment = ENV if env is None or '' else ("http://" + env)
         public = publicinfoflow(customermanager)
         if public.isExisits():
             customer_manager ,department = public.iscustomerExist()
@@ -67,7 +69,7 @@ def startjob(request):
                                                                                                                  introduction_department=department,
                                                                                                                  aml_monitor_flag='true')
 
-            url = env+'/ctptyInfoUpdate/remind/check'
+            url = enviroment+'/ctptyInfoUpdate/remind/check'
             playload = {'checkDayAfter': '2010-10-10',
                         'checkDbData': 'false',
                         'checkInDate': '2022-08-31',
@@ -105,6 +107,8 @@ def startjob1(request):
     try :
         log.info("**************************生成公开信息流程开始******************************")
         customermanager = request.POST.get("customermanager")
+        env = request.POST.get('env')
+        enviroment = ENV if env is None or '' else ("http://" + env)
         public = publicinfoflow(customermanager)
         if public.isExisits():
             customer_manager ,department = public.iscustomerExist()
@@ -124,7 +128,7 @@ def startjob1(request):
             models.OtcDerivativeCounterparty.objects.filter(unifiedsocial_code=public.unifiledsocialcode).update(customer_manager=customer_manager,
                                                                                                                  introduction_department=department,
                                                                                                                  aml_monitor_flag='true')
-            url = env+'/ctptyInfoUpdate/remind/check'
+            url = enviroment+'/ctptyInfoUpdate/remind/check'
             playload = {'checkDayAfter': '2010-10-10',
                         'checkDbData': 'false',
                         'checkInDate': '2022-08-31',

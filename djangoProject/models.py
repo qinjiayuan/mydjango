@@ -567,7 +567,6 @@ class CounterpartyBenefitOverList(models.Model):
     name = models.TextField(blank=True, null=True)  # This field type is a guess.
     id_no = models.TextField(blank=True, null=True)  # This field type is a guess.
     proportion = models.FloatField(blank=True, null=True)
-    id = models.TextField(primary_key=True)  # This field type is a guess.
     fiid = models.BigIntegerField(blank=True, null=True)
     professional_investor_flag = models.TextField(blank=True, null=True)  # This field type is a guess.
     financial_assets_of_lastyear = models.FloatField(blank=True, null=True)
