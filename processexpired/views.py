@@ -498,7 +498,6 @@ def reviewjob(request,corporateName,customermanager,expired):
                                                                name='测试',
                                                                id_no='1928382942342',
                                                                proportion='88',
-                                                               id=reviewflow.getid(),
                                                                professional_investor_flag='1',
                                                                invest_3year_exp_flag='1',
                                                                financial_assets_of_lastyear='1',
@@ -678,7 +677,7 @@ def processexpiredjob(request):
         #触发下到期提醒
         log.info("*********************开始触发即将到期提醒*********************")
         url = env + "/api/manualTriggerJob/1.0.0/processExpiredRemindJob"
-        params = {'trigger4ProcessType': ''}
+        params = {'trigger4ProcessType': 'CLIENT_REVIEW'}
         response = requests.post(url=url, data=params)
         log.info(response.json())
         log.info("********************即将到期提醒已触发***********************")

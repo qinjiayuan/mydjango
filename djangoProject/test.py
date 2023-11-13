@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta,date
 import random
+from importlib import reload
 
 import django
 from djangoProject import models
@@ -35,9 +36,4 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE","settings")
 #删除操作
     models.OtcDerivativeCounterparty.objects.filter(corporate_name='').delete()
 '''
-
-
-
-
-
 

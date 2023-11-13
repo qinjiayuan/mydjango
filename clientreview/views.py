@@ -137,13 +137,12 @@ def startjob(request):
             ('client_id')]
             for client_id in clientIdlist:
                 flag: bool = True if len(
-                    models.CounterpartyBenefitOverList.objects.filter(client_id=client_id).all()) else False
+                    models.CounterpartyBenefitOverList.objects.filter(client_id=client_id).values('client_id')) else False
                 if not flag:
                     info_benefit = CounterpartyBenefitOverList(client_id=client_id,
                                                                name='测试',
                                                                id_no='1928382942342',
                                                                proportion='88',
-                                                               id=reviewflow.getid(),
                                                                professional_investor_flag='1',
                                                                invest_3year_exp_flag='1',
                                                                financial_assets_of_lastyear='1',
@@ -232,7 +231,8 @@ def startjob1(request):
                 raise ValueError("该客户经理不存在,请输入中文名称且确认该用户存在")
             # 删除在途流程
             models.OtcDerivativeCounterparty.objects.filter(corporate_name=reviewflow.corporateName).update(customer_manager=user,
-                                                                                                            introduction_department=department)
+                                                                                                            introduction_department=department,
+                                                                                                            allow_busi_type='OPTION,TRS')
             record_list = [record["record_id"] for record in
                            models.ClientReviewRecord.objects.filter(client_name=reviewflow.corporateName).exclude(
                                current_status='CLOSED').values("record_id")]
@@ -265,13 +265,13 @@ def startjob1(request):
             ('client_id')]
             for client_id in clientIdlist:
                 flag: bool = True if len(
-                    models.CounterpartyBenefitOverList.objects.filter(client_id=client_id).all()) else False
+                    models.CounterpartyBenefitOverList.objects.filter(client_id=client_id).values('client_id')) else False
                 if not flag:
                     info_benefit = CounterpartyBenefitOverList(client_id=client_id,
                                                                name='测试',
+
                                                                id_no='1928382942342',
                                                                proportion='88',
-                                                               id=reviewflow.getid(),
                                                                professional_investor_flag='1',
                                                                invest_3year_exp_flag='1',
                                                                financial_assets_of_lastyear='1',
@@ -338,7 +338,7 @@ def startjob1(request):
                     data["title{}".format(i+1)]=titleList[i]
 
                 return JsonResponse(
-                    {"status": "successful",
+                    {"status": "successfully",
                      "data": data,
                      "code": "200"}
                 )
