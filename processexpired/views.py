@@ -677,7 +677,7 @@ def processexpiredjob(request):
         #触发下到期提醒
         log.info("*********************开始触发即将到期提醒*********************")
         url = env + "/api/manualTriggerJob/1.0.0/processExpiredRemindJob"
-        params = {'trigger4ProcessType': 'CLIENT_REVIEW'}
+        params = {'trigger4ProcessType': ''}
         response = requests.post(url=url, data=params)
         log.info(response.json())
         log.info("********************即将到期提醒已触发***********************")

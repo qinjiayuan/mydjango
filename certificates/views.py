@@ -254,8 +254,9 @@ def startjob1(request):
             log.info(responsed.json())
 
             title = {}
-            titleList = [title['title'] for title in models.CrtExpiredRecord.objects.filter(unifiedsocial_code=unifiedsocialcode).exclude(current_status__in=['CLOSED','CANCELLED']).values("title")]
-            log.info("title1 is {}".format(title))
+            titleList = [title['title'] for title in models.CrtExpiredRecord.objects.filter(unifiedsocial_code=unifiedsocialcode,
+                                                                                            current_status='PROCESSING').values("title")]
+            log.info("title is {}".format(titleList))
             for i in range(len(titleList)):
                 title["title{}".format(i+1)] = titleList[i]
 
