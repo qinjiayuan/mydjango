@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-(=^k+_swcx(q*e^0w6wqlip-5x+#-35a@y^qc4@-p_o)g9f*th
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*','10.50.90.13']
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -196,7 +196,7 @@ CORS_ORIGIN_ALLOW_ALL = True
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 #测试环境
-ENV = "http://10.2.145.216:9090"
+ENV = "http://10.2.145.217:9090"
 #开发环境
 # ENV = ''
 os.environ["ENV"] = ENV

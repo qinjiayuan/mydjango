@@ -672,7 +672,7 @@ def processexpiredjob(request):
         log.info("接受到的参数为{}".format(indata))
         certificatesjob(request,corporateName,customermanager,expired,enviroment)
         publicinfojob(request,corporateName,customermanager,expired,enviroment)
-        # reviewjob(request,corporateName,customermanager,expired,enviroment)
+        reviewjob(request,corporateName,customermanager,expired,enviroment)
         optionjob(request,corporateName,customermanager,expired,enviroment)
 
 

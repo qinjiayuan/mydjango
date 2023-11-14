@@ -223,9 +223,8 @@ def startjob1(request):
     isnew = request.POST.get('isnew')
     env = request.POST.get("env")
     enviroment = ENV if env is None or '' else ("http://" + env)
-    print(corporateName)
-    print(customermanager)
-    print(isnew)
+    log.info("公司为：{},客户经理为：{},环境为：{}".format(corporateName,customermanager,enviroment))
+
     reviewflow = Clientreviewflow(corporateName, customermanager, isnew)
     file_name = ['主体/管理人文件', '32', 'CSRC', 'QCC_CREDIT_RECORD', 'CEIDN', 'QCC_ARBITRATION', 'QCC_AUDIT_INSTITUTION',
                  'CCPAIMIS', 'CC', 'P2P', 'OTHERS', 'NECIPS', 'CJO']
