@@ -113,16 +113,16 @@ def startjob(request):
                              'title')]
             for i in range(len(titleList)):
                 title["title{}".format(i + 1)] = titleList[i]
-            log.info("titleList is {}".format(titleList))
-
-            return render(request, 'clientreview.html', {"data": "发起成功",
-                                                         "code": "200"})
+            log.info("流程标题 : {}".format(titleList))
+            log.info("****************************期权产品监测流程已生成*****************************")
+            return render(request, 'clientreview.html', {"data": "发起成功!"})
+        else :
+            return render(request, 'clientreview.html', {"data": "机构不存在!"})
 
     except  Exception as e:
         log.info("error is :".format(str(e)))
 
-        return render('clientreview.html', {"data": "发起成功",
-                                            "code": "500"})
+        return render(request,'clientreview.html', {"data": str(e)})
 
 
 def form(request):

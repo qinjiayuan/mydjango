@@ -77,22 +77,23 @@ def startjob(request):
                         'uniCodeList': '911101080828461726'}
 
             log.info("请求url：{}".format(url))
-            log.info("请求参数：")
-            print(playload)
+            log.info("请求参数：{}".format(playload))
             response = requests.post(url=url,
                                      data=playload)
             log.info(response.json())
             title = {}
-            titleList = [title["title"] for title in models.CounterpartyProdMonitorFlow.objects.filter(unifiedsocial_code='911101080828461726').exclude(
+            titleList = [title["title"] for title in models.CtptyInfoUpdateRecord.objects.filter(unifiedsocial_code='911101080828461726').exclude(
                 current_status__in=['CLOSED','CANCELLED']).values('title')]
             for i in range(len(titleList)):
                 title["title{}".format(i+1)] = titleList[i]
+            log.info("流程标题:{}".format(title))
             log.info("***********公开信息变更流程生成已完成*************")
-            return render(request,'clientreview.html',{"data":response.json(),"code":"200"})
+
+            return render(request,'clientreview.html',{"data":"发起成功!"})
         else :
-            raise ValueError("机构不存在")
+            return render(request,'clientreview.html',{"data":"机构不存在!!"})
     except Exception as e :
-        return render(request,'clientreview.html',{"data":str(e),"code":"500"})
+        return render(request,'clientreview.html',{"data":str(e)})
 
 
 def form(request):

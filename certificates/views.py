@@ -199,13 +199,23 @@ def startjob(request):
             log.info("request paramas is {}".format(params))
             responsed = requests.post(url=url,
                                      data=params)
+            log.info(responsed.json())
+
+            title = {}
+            titleList = [title['title'] for title in
+                         models.CrtExpiredRecord.objects.filter(unifiedsocial_code=unifiedsocialcode,
+                                                                current_status='PROCESSING').values("title")]
+
+            for i in range(len(titleList)):
+                title["title{}".format(i + 1)] = titleList[i]
+            log.info("流程标题 : {}".format(title))
             log.info("************************证件过期流程已生成****************************")
-            return render(request,'clientreview.html',{"data":responsed.json(), 'code': '200'})
+            return render(request,'clientreview.html',{"data":'发起成功'})
 
         else:
             raise ValueError("该机构不存在")
     except Exception as e :
-        return render(request,'clientreview.html',{"data":str(e),"code":"500"})
+        return render(request,'clientreview.html',{"data":str(e)})
 
 def form(request):
     return render(request,'certexpired.html')
@@ -260,7 +270,7 @@ def startjob1(request):
             for i in range(len(titleList)):
                 title["title{}".format(i+1)] = titleList[i]
 
-            log.info("已经执行完循环了")
+
             log.info("****************************证件过期流程已生成*************************")
             return JsonResponse({"status":"successfully",
                                  "data":title,

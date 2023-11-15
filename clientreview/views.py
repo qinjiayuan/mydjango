@@ -200,17 +200,24 @@ def startjob(request):
                         models.ClientReviewFileRecord.objects.filter(s3_file_id=s3fileidList[i]).update(
                             record_id=newrecordid,
                             file_belong=file_name[i])
-                log.info("**********************生成回访流程结束**************************")
-                return render(request, 'clientreview.html', {"data": response1.json(), 'code': '200'})
 
-        return render(request, 'clientreview.html', {"data": "客户经理或者机构不存在", "code": "500"})
+                title = {}
+                titleList = [title['title'] for title in
+                             models.ClientReviewRecord.objects.filter(client_name=corporateName,
+                                                                    current_status__in=['PROCESSING','TEMPORARY']).values("title")]
+
+                for i in range(len(titleList)):
+                    title["title{}".format(i + 1)] = titleList[i]
+                log.info("流程标题 : {}".format(titleList))
+                log.info("**********************生成回访流程结束**************************")
+                return render(request, 'clientreview.html', {"data": '发起成功!'})
+
+        return render(request, 'clientreview.html', {"data": "客户经理或者机构不存在"})
     except Exception as e:
         log.info("error is {}".format(e))
-        return render(request, 'clientreview.html', {"data": str(e), 'code': '500'})
+        return render(request, 'clientreview.html', {"data": str(e)})
 
 
-def form(request):
-    return render(request, 'clientreviewdata.html')
 
 
 #直接返回json报文
@@ -352,3 +359,9 @@ def startjob1(request):
         return JsonResponse({"status": "failed",
                              "error":str(e),
                              "code":"500"})
+
+def form(request):
+    return render(request, 'clientreviewdata.html')
+
+def processtype(request):
+    return render(request,'processtype.html')

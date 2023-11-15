@@ -657,6 +657,37 @@ def optionjob(request,corporatename,customermanager,expired):
 
 
 
+
+def startjob(request):
+    try:
+        corporateName = request.POST.get('corporatename')
+        customermanager = request.POST.get('customermanager')
+        expired = request.POST.get("expired")
+        indata= {}
+        indata["corporateName"]=corporateName
+        indata['customermanager'] = customermanager
+        indata['expired'] = expired
+        log.info("接受到的参数为{}".format(indata))
+        certificatesjob(request,corporateName,customermanager,expired)
+        publicinfojob(request,corporateName,customermanager,expired)
+        reviewjob(request,corporateName,customermanager,expired)
+        optionjob(request,corporateName,customermanager,expired)
+
+
+
+        #触发下到期提醒
+        log.info("*********************开始触发即将到期提醒*********************")
+        url = env + "/api/manualTriggerJob/1.0.0/processExpiredRemindJob"
+        params = {'trigger4ProcessType': ''}
+        response = requests.post(url=url, data=params)
+        log.info(response.json())
+        log.info("********************即将到期提醒已触发***********************")
+
+        return render(request,'clientreview.html',{"data":"已成功触发!"})
+
+    except Exception as e :
+        return render(request,'clientreview.html',{"data":str(e)})
+
 def processexpiredjob(request):
     try:
         corporateName = request.POST.get('corporatename')
@@ -689,3 +720,7 @@ def processexpiredjob(request):
         return JsonResponse({"status":'failed',
                              "code":"500",
                              "error":str(e)})
+
+
+def form(request):
+    return render(request,'processexpired.html')

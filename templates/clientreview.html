@@ -6,11 +6,12 @@
 </head>
 <body>
     <h1>{{data}}</h1>
-    <h2>{{code}}</h2>
-    <button onclick="setreviewURL()">返回回访流程生成</button>
-    <button onclick="setpublicURL()">返回公开信息流程生成</button>
-    <button onclick="setcertURL()">返回证件到期生成</button>
-    <button onclick="setoptionURL()">返回期权产品监测流程生成</button>
+<!--    <button onclick="setreviewURL()">返回回访流程生成</button>-->
+<!--    <button onclick="setpublicURL()">返回公开信息流程生成</button>-->
+<!--    <button onclick="setcertURL()">返回证件到期生成</button>-->
+<!--    <button onclick="setoptionURL()">返回期权产品监测流程生成</button>-->
+<!--    <button onclick="setexpiredURL()">返回即将到期生成</button>-->
+    <button onclick="back()">返回</button>
 
 </body>
 <script>
@@ -28,6 +29,12 @@
     }
     function setoptionURL(){
         window.location.href='http://' + host + '/counterpartyoption/form'
+    }
+    function setexpiredURL(){
+        window.location.href='http://' + host + '/processexpired/form'
+    }
+    function back(){
+        window.location.href='http://' + host + '/clientreview/processtype'
     }
 
 </script>
