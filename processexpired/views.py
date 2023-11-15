@@ -4,7 +4,6 @@ from django.shortcuts import render
 from django.http import JsonResponse, request, HttpResponse
 from djangoProject import models
 from datetime  import date,datetime,timedelta
-from certificates.views import startjob1,startjob
 from django.utils import log
 import random,requests
 from django.db.models import Q

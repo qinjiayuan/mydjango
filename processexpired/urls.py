@@ -8,5 +8,6 @@ urlpatterns = [
     path('reviewjob',views.reviewjob,name='job3'),
     path('processexpiredjob',views.processexpiredjob,name='job'),
     path('form',views.form,name='form'),
+    path('startjob',views.startjob,name='job6'),
 
 ]
