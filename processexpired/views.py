@@ -4,7 +4,7 @@ from django.shortcuts import render
 from django.http import JsonResponse, request, HttpResponse
 from djangoProject import models
 from datetime  import date,datetime,timedelta
-from certificates.views import startjob1,startjob
+
 from django.utils import log
 import random,requests
 from django.db.models import Q
@@ -219,8 +219,6 @@ class certificates():
             noncounterpartList = list(
                 filter(lambda client: len(models.AmlCounterparty.objects.filter(client_id=client).values("client_id")) == 0,
                        clientidList))
-            print('开始查看')
-            print(noncounterpartList)
             # 添加counaterparty和受益人
             # if  len(noncounterpartList)!=0 :
             if noncounterpartList:
@@ -399,9 +397,8 @@ def publicinfojob(request,corporatename,customermanager,expired,enviroment):
                         'today': date.today(),
                         'uniCodeList': '911101080828461726'}
 
-            log.info("请求url：{}".format(url))
-            log.info("请求参数：")
-            print(playload)
+            log.info("请求url:{}".format(url))
+            log.info("请求参数:{}".format(playload))
             response = requests.post(url=url,
                                      data=playload)
             log.info(response.json())
@@ -559,7 +556,7 @@ def reviewjob(request,corporateName,customermanager,expired,enviroment):
                 titleList = [flowid["title"] for flowid in models.ClientReviewRecord.objects.filter(client_name=corporateName,
                                                                                                      current_status__in=['PROCESSING',"TEMPORARY"]).values("title")]
                 log.info(titleList)
-                # return render(request, 'clientreview.html', {"data": response1.json(), 'code': '200'})
+                # return render(request, 'result.html', {"data": response1.json(), 'code': '200'})
                 data = {}
                 for i in range(len(titleList)):
                     data["title{}".format(i+1)]=titleList[i]
@@ -574,7 +571,7 @@ def reviewjob(request,corporateName,customermanager,expired,enviroment):
                      "data": data,
                      "code": "200"}
                 )
-        # return render(request, 'clientreview.html', {"data": "客户经理或者机构不存在", "code": "500"})
+        # return render(request, 'result.html', {"data": "客户经理或者机构不存在", "code": "500"})
 
 
         return JsonResponse({"status":"failed",
@@ -582,7 +579,7 @@ def reviewjob(request,corporateName,customermanager,expired,enviroment):
                              "code":"500"})
     except Exception as e:
         log.info("error is {}".format(e))
-        # return render(request, 'clientreview.html', {"data": str(e), 'code': '500'})
+        # return render(request, 'result.html', {"data": str(e), 'code': '500'})
         return JsonResponse({"status": "failed",
                              "error":str(e),
                              "code":"500"})
@@ -658,17 +655,53 @@ def optionjob(request,corporatename,customermanager,expired,enviroment):
 
 
 
+def startjob(request):
+    try:
+        corporateName = request.POST.get('corporatename')
+        customermanager = request.POST.get('customermanager')
+        expired = request.POST.get("expired")
+        env = request.POST.get('env')
+        enviroment = ENV if env is None or env == '' else ("http://" + env)
+        indata= {}
+        indata["corporateName"] = corporateName
+        indata['customermanager'] = customermanager
+        indata['expired'] = expired
+        indata['env'] = env
+        log.info("接受到的参数为{}".format(indata))
+        certificatesjob(request,corporateName,customermanager,expired,enviroment)
+        publicinfojob(request,corporateName,customermanager,expired,enviroment)
+        reviewjob(request,corporateName,customermanager,expired,enviroment)
+        optionjob(request,corporateName,customermanager,expired,enviroment)
+
+        #触发下到期提醒
+        log.info("*********************开始触发即将到期提醒*********************")
+        url = enviroment + "/api/manualTriggerJob/1.0.0/processExpiredRemindJob"
+        params = {'trigger4ProcessType': ''}
+        response = requests.post(url=url, data=params)
+        log.info(response.json())
+        log.info("********************即将到期提醒已触发***********************")
+
+        return render(request,'result.html',{"data":"已成功触发!"})
+    except Exception as e :
+        log.info("error is {}".format(str(e)))
+        return render(request,'result.html',{"data":str(e)})
+
+
+def form(request):
+    return render(request,'processexpired.html')
+
 def processexpiredjob(request):
     try:
         corporateName = request.POST.get('corporatename')
         customermanager = request.POST.get('customermanager')
         expired = request.POST.get("expired")
         env = request.POST.get('env')
-        enviroment = ENV if env is None or '' else ("http://" + env)
+        enviroment = ENV if env is None or env == '' else ("http://" + env)
         indata= {}
         indata["corporateName"]=corporateName
         indata['customermanager'] = customermanager
         indata['expired'] = expired
+        indata['env'] = env
         log.info("接受到的参数为{}".format(indata))
         certificatesjob(request,corporateName,customermanager,expired,enviroment)
         publicinfojob(request,corporateName,customermanager,expired,enviroment)
@@ -689,6 +722,7 @@ def processexpiredjob(request):
                              "code":"200",
                              "data":"done"})
     except Exception as e :
+        log.info("error is {}".format(str(e)))
         return JsonResponse({"status":'failed',
                              "code":"500",
                              "error":str(e)})

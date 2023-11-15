@@ -93,10 +93,9 @@ def startjob(request):
     customermanager = request.POST.get('customermanager')
     isnew = request.POST.get('isnew')
     env = request.POST.get("env")
-    enviroment = ENV if env is None or '' else ("http://" + env)
-    print(corporateName)
-    print(customermanager)
-    print(isnew)
+    enviroment = ENV if env is None or env == '' else ("http://" + env)
+    log.info("公司为：{},客户经理为：{},环境为：{}".format(corporateName, customermanager, enviroment))
+
     reviewflow = Clientreviewflow(corporateName, customermanager, isnew)
     file_name = ['主体/管理人文件', '32', 'CSRC', 'QCC_CREDIT_RECORD', 'CEIDN', 'QCC_ARBITRATION', 'QCC_AUDIT_INSTITUTION',
                  'CCPAIMIS', 'CC', 'P2P', 'OTHERS', 'NECIPS', 'CJO']
@@ -106,8 +105,9 @@ def startjob(request):
             if user is None or department is None:
                 raise ValueError("该客户经理不存在,请输入中文名称且确认该用户存在")
             # 删除在途流程
-            models.OtcDerivativeCounterparty.objects.filter(corporate_name=reviewflow.corporateName).update(customer_manager=user,
-                                                                                                            introduction_department=department)
+            models.OtcDerivativeCounterparty.objects.filter(corporate_name=reviewflow.corporateName).update(
+                customer_manager=user,
+                introduction_department=department)
             record_list = [record["record_id"] for record in
                            models.ClientReviewRecord.objects.filter(client_name=reviewflow.corporateName).exclude(
                                current_status='CLOSED').values("record_id")]
@@ -152,7 +152,6 @@ def startjob(request):
                                                                assets_20million_flag='true'
                                                                )
                     info_benefit.save()
-
             datas = {'checkDateEnd': date.today(),
                      'checkDateStart': date.today(),
                      'uniCodeList': unifiledsocialcode[0]["unifiedsocial_code"]}
@@ -204,17 +203,29 @@ def startjob(request):
                             record_id=newrecordid,
                             file_belong=file_name[i])
                 log.info("**********************生成回访流程结束**************************")
-                return render(request, 'clientreview.html', {"data": response1.json(), 'code': '200'})
+                titleList = [flowid["title"] for flowid in
+                             models.ClientReviewRecord.objects.filter(client_name=corporateName,
+                                                                      current_status__in=['PROCESSING',
+                                                                                          "TEMPORARY"]).values("title")]
+                log.info(titleList)
+                # return render(request, 'result.html', {"data": response1.json(), 'code': '200'})
+                data = {}
+                for i in range(len(titleList)):
+                    data["title{}".format(i + 1)] = titleList[i]
+                log.info("流程标题 : {}".format(data))
+                return render(request, 'result.html', {"data": "发起成功!"})
 
-        return render(request, 'clientreview.html', {"data": "客户经理或者机构不存在", "code": "500"})
+        return render(request, 'result.html', {"data": "客户经理或者机构不存在"})
     except Exception as e:
         log.info("error is {}".format(e))
-        return render(request, 'clientreview.html', {"data": str(e), 'code': '500'})
+        return render(request, 'result.html', {"data": str(e)})
 
 
 def form(request):
     return render(request, 'clientreviewdata.html')
 
+def processtype(request):
+    return render(request,'processtype.html')
 
 #直接返回json报文
 def startjob1(request):
@@ -334,7 +345,7 @@ def startjob1(request):
                 titleList = [flowid["title"] for flowid in models.ClientReviewRecord.objects.filter(client_name=corporateName,
                                                                                                      current_status__in=['PROCESSING',"TEMPORARY"]).values("title")]
                 log.info(titleList)
-                # return render(request, 'clientreview.html', {"data": response1.json(), 'code': '200'})
+                # return render(request, 'result.html', {"data": response1.json(), 'code': '200'})
                 data = {}
                 for i in range(len(titleList)):
                     data["title{}".format(i+1)]=titleList[i]
@@ -344,13 +355,14 @@ def startjob1(request):
                      "data": data,
                      "code": "200"}
                 )
-        # return render(request, 'clientreview.html', {"data": "客户经理或者机构不存在", "code": "500"})
+        # return render(request, 'result.html', {"data": "客户经理或者机构不存在", "code": "500"})
         return JsonResponse({"status":"failed",
                              "error":"客户经理或者机构不存在",
                              "code":"500"})
     except Exception as e:
         log.info("error is {}".format(e))
-        # return render(request, 'clientreview.html', {"data": str(e), 'code': '500'})
+        # return render(request, 'result.html', {"data": str(e), 'code': '500'})
         return JsonResponse({"status": "failed",
                              "error":str(e),
                              "code":"500"})
+

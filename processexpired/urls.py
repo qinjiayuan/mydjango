@@ -6,6 +6,8 @@ urlpatterns = [
     path('certificatesjob',views.certificatesjob,name='job1'),
     path('publicinfojob',views.publicinfojob,name='job2'),
     path('reviewjob',views.reviewjob,name='job3'),
-    path('processexpiredjob',views.processexpiredjob,name='job')
+    path('processexpiredjob',views.processexpiredjob,name='job'),
+    path('startjob',views.startjob,name='job4'),
+    path('form',views.form,name='form')
 
 ]

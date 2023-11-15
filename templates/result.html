@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+</head>
+<body>
+    <h1>{{data}}</h1>
+<!--    <button onclick="setreviewURL()">返回回访流程生成</button>-->
+<!--    <button onclick="setpublicURL()">返回公开信息流程生成</button>-->
+<!--    <button onclick="setcertURL()">返回证件到期生成</button>-->
+<!--    <button onclick="setoptionURL()">返回期权产品监测流程生成</button>-->
+<!--    <button onclick="setexpiredURL()">返回即将到期生成</button>-->
+    <button onclick="back()">返回</button>
+
+</body>
+<script>
+    var host = window.location.host||'127.0.0.1:8080';
+    var pathname = window.location.pathname
+    console.log("host:",host);
+    function setreviewURL(){
+        window.location.href='http://' + host + '/clientreview/form'
+    }
+    function setpublicURL(){
+        window.location.href='http://' + host + '/ctptypublicinfo/form'
+    }
+    function setcertURL(){
+        window.location.href='http://' + host + '/certificates/form'
+    }
+    function setoptionURL(){
+        window.location.href='http://' + host + '/counterpartyoption/form'
+    }
+    function setexpiredURL(){
+        window.location.href='http://' + host + '/processexpired/form'
+    }
+    function back(){
+        window.location.href='http://' + host + '/clientreview/processtype'
+    }
+
+</script>
+</html>

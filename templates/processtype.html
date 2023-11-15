@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    select {
+      width: 200px;
+      height: 38px;
+      font-size: 20px;
+    }
+    button {
+      color: #fff;
+      padding: 12px;
+      background-color: #1f93d5;
+      border: 0;
+      margin-right: 16px;
+    }
+  </style>
+</head>
+<body>
+    <h1>
+      <select name="envName" id="envName">
+        <option value="tst">tst</option>
+        <option value="dev">dev</option>
+      </select>
+    </h1>
+    <button onclick="dealPath('clientreview')">回访流程</button>
+    <button onclick="dealPath('ctptypublicinfo')">公开信息变更流程</button>
+    <button onclick="dealPath('certificates')">证件过期流程</button>
+    <button onclick="dealPath('counterpartyoption')">期权产品监测流程</button>
+    <button onclick="dealPath('processexpired')">即将到期邮件提醒</button>
+</body>
+<script>
+    const { host, pathname } = window.location;
+    var path = host || '127.0.0.1:8080';
+    console.log("host:", path);
+    function dealPath(type) {
+      window.location.href = `http://${path}/${type}/form`
+    }
+</script>
+</html>

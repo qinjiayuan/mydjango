@@ -43,33 +43,37 @@ class publicinfoflow(object):
 
 
 def startjob(request):
-
-    try :
+    try:
         log.info("**************************生成公开信息流程开始******************************")
         customermanager = request.POST.get("customermanager")
         env = request.POST.get('env')
-        enviroment = ENV if env is None or '' else ("http://" + env)
+        enviroment = ENV if env is None or env == '' else ("http://" + env)
+        log.info("客户经理:{},环境:{}".format(customermanager, env))
         public = publicinfoflow(customermanager)
         if public.isExisits():
-            customer_manager ,department = public.iscustomerExist()
+            customer_manager, department = public.iscustomerExist()
             print(customer_manager)
             print(department)
-            if  customer_manager is None  and department is None   :
+            if customer_manager is None and department is None:
                 raise ValueError("该客户经理不存在,请输入中文名称且确认该用户存在")
-            #删除存量流程
-            models.CtptyInfoUpdateRecord.objects.filter(unifiedsocial_code=public.unifiledsocialcode).exclude(current_status='CLOSED').delete()
-            last_client_id = [client['client_id'] for client in models.OtcDerivativeCounterparty.objects.filter(unifiedsocial_code='911101080828461726',
-                                                                            corporate_name='云合资本管理(北京)有限公司').all().values('client_id')]
-            models.CounterpartyOrg.objects.filter(unifiedsocial_code=public.unifiledsocialcode).update(lastest_client_id=last_client_id[0],
-                                                                                                       customer_manager=customer_manager,
-                                                                                                       introduction_department=department,
-                                                                                                       aml_monitor_flag='true'
-                                                                                                       )
-            models.OtcDerivativeCounterparty.objects.filter(unifiedsocial_code=public.unifiledsocialcode).update(customer_manager=customer_manager,
-                                                                                                                 introduction_department=department,
-                                                                                                                 aml_monitor_flag='true')
-
-            url = enviroment+'/ctptyInfoUpdate/remind/check'
+            # 删除存量流程
+            models.CtptyInfoUpdateRecord.objects.filter(unifiedsocial_code=public.unifiledsocialcode).exclude(
+                current_status='CLOSED').delete()
+            last_client_id = [client['client_id'] for client in
+                              models.OtcDerivativeCounterparty.objects.filter(unifiedsocial_code='911101080828461726',
+                                                                              corporate_name='云合资本管理(北京)有限公司').all().values(
+                                  'client_id')]
+            models.CounterpartyOrg.objects.filter(unifiedsocial_code=public.unifiledsocialcode).update(
+                lastest_client_id=last_client_id[0],
+                customer_manager=customer_manager,
+                introduction_department=department,
+                aml_monitor_flag='true'
+                )
+            models.OtcDerivativeCounterparty.objects.filter(unifiedsocial_code=public.unifiledsocialcode).update(
+                customer_manager=customer_manager,
+                introduction_department=department,
+                aml_monitor_flag='true')
+            url = enviroment + '/ctptyInfoUpdate/remind/check'
             playload = {'checkDayAfter': '2010-10-10',
                         'checkDbData': 'false',
                         'checkInDate': '2022-08-31',
@@ -78,23 +82,26 @@ def startjob(request):
                         'today': date.today(),
                         'uniCodeList': '911101080828461726'}
 
-            log.info("请求url：{}".format(url))
-            log.info("请求参数：")
-            print(playload)
+            log.info("请求url:{}".format(url))
+            log.info("请求参数:{}".format(playload))
+
             response = requests.post(url=url,
                                      data=playload)
             log.info(response.json())
             title = {}
-            titleList = [title["title"] for title in models.CounterpartyProdMonitorFlow.objects.filter(unifiedsocial_code='911101080828461726').exclude(
-                current_status__in=['CLOSED','CANCELLED']).values('title')]
+            titleList = [title["title"] for title in
+                         models.CtptyInfoUpdateRecord.objects.filter(unifiedsocial_code='911101080828461726').exclude(
+                             current_status__in=['CLOSED', 'CANCELLED']).values('title')]
             for i in range(len(titleList)):
-                title["title{}".format(i+1)] = titleList[i]
+                title["title{}".format(i + 1)] = titleList[i]
+            log.info("title is {}".format(title))
             log.info("***********公开信息变更流程生成已完成*************")
-            return render(request,'clientreview.html',{"data":response.json(),"code":"200"})
+            return render(request,'result.html',{"data":"发起成功!"})
         else :
             raise ValueError("机构不存在")
     except Exception as e :
-        return render(request,'clientreview.html',{"data":str(e),"code":"500"})
+        log.info("error is :".format(str(e)))
+        return render(request,'result.html',{"data":str(e)})
 
 
 def form(request):
@@ -108,7 +115,8 @@ def startjob1(request):
         log.info("**************************生成公开信息流程开始******************************")
         customermanager = request.POST.get("customermanager")
         env = request.POST.get('env')
-        enviroment = ENV if env is None or '' else ("http://" + env)
+        enviroment = ENV if env is None or env == '' else ("http://" + env)
+        log.info("客户经理:{},环境:{}".format(customermanager,env))
         public = publicinfoflow(customermanager)
         if public.isExisits():
             customer_manager ,department = public.iscustomerExist()

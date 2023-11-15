@@ -83,8 +83,6 @@ class certificates():
             noncounterpartList = list(
                 filter(lambda client: len(models.AmlCounterparty.objects.filter(client_id=client).values("client_id")) == 0,
                        clientidList))
-            print('开始查看')
-            print(noncounterpartList)
             # 添加counaterparty和受益人
             # if  len(noncounterpartList)!=0 :
             if noncounterpartList:
@@ -167,47 +165,71 @@ def startjob(request):
     corporatename = request.POST.get("corporatename")
     customermanager = request.POST.get("customermanager")
     env = request.POST.get("env")
-    enviroment = ENV if env is None or '' else ("http://" + env )
-    print("corporatename : {} , customermanager : {}".format(str(corporatename),str(customermanager)))
+    enviroment = ENV if env is None or env == '' else ("http://" + env)
+    print("corporatename : {} , customermanager : {},env ：{}".format(str(corporatename), str(customermanager),env))
+    log.info("env的类型是{}".format(type(env)))
+    log.info(enviroment)
     log.info("**********************开始生成证件过期流程**************************")
     try:
-        cert = certificates(corporatename,customermanager)
+        cert = certificates(corporatename, customermanager)
         flag = cert.isExist()
-        if flag :
-            user , department = cert.iscustomerExist()
-            if  user is None or department is None :
+        if flag:
+            user, department = cert.iscustomerExist()
+            if user is None or department is None:
                 raise ValueError("该客户经理不存在,请输入中文名称且确认该用户存在")
 
-           #先处理受益人信息
+            # 先处理受益人信息
             cert.add_Beneficiary(corporatename)
-            #更改客户经理
+            # 更改客户经理
             models.OtcDerivativeCounterparty.objects.filter(corporate_name=corporatename).update(customer_manager=user,
                                                                                                  introduction_department=department)
-            #通过证件来找到在途流程并且进行更改
-            counterpartyId = [id["id"] for id in models.AmlCounterparty.objects.filter(client_name=corporatename).all().values("id")]
+            # 通过证件来找到在途流程并且进行更改
+            counterpartyId = [id["id"] for id in
+                              models.AmlCounterparty.objects.filter(client_name=corporatename).all().values("id")]
             log.info("counterpartyId is :{}".format(counterpartyId))
-            if counterpartyId :
+            if counterpartyId:
                 idno = [idno["id_no"] for idno in models.AmlBeneficiary.objects.filter(category='1',
                                                                                        counterparty_id__in=counterpartyId,
                                                                                        name='回访9527').values('id_no')]
-                recordList = [record['crt_expired_record_id'] for record in models.CrtExpiredPersonRecord.objects.filter(id_no__in=idno).values('crt_expired_record_id')]
+                recordList = [record['crt_expired_record_id'] for record in
+                              models.CrtExpiredPersonRecord.objects.filter(id_no__in=idno).values(
+                                  'crt_expired_record_id')]
                 models.CrtExpiredRecord.objects.filter(record_id__in=recordList).update(current_status='CLOSED')
 
-            unifiedsocialcode = [item["unifiedsocial_code"] for item in models.OtcDerivativeCounterparty.objects.filter(corporate_name=corporatename).all().values("unifiedsocial_code")][0]
-            models.CrtExpiredRecord.objects.filter(unifiedsocial_code=unifiedsocialcode).exclude(current_status='CLOSED').delete()
+            unifiedsocialcode = [item["unifiedsocial_code"] for item in models.OtcDerivativeCounterparty.objects.filter(
+                corporate_name=corporatename).all().values("unifiedsocial_code")][0]
+            models.CrtExpiredRecord.objects.filter(unifiedsocial_code=unifiedsocialcode).exclude(
+                current_status='CLOSED').delete()
             url = enviroment + '/certificates/expired/NATURE_PERSON'
-            params = {"checkDate":date.today(),
-                      "unifiedsocialCodeList":unifiedsocialcode}
+            params = {"checkDate": date.today(),
+                      "unifiedsocialCodeList": unifiedsocialcode}
             log.info("request paramas is {}".format(params))
             responsed = requests.post(url=url,
-                                     data=params)
-            log.info("************************证件过期流程已生成****************************")
-            return render(request,'clientreview.html',{"data":responsed.json(), 'code': '200'})
+                                      data=params)
+            log.info(responsed.json())
+
+            title = {}
+            titleList = [title['title'] for title in
+                         models.CrtExpiredRecord.objects.filter(unifiedsocial_code=unifiedsocialcode).exclude(
+                             current_status__in=['CLOSED', 'CANCELLED']).values("title")]
+            log.info("title1 is {}".format(titleList))
+            for i in range(len(titleList)):
+                title["title{}".format(i + 1)] = titleList[i]
+            log.info("流程标题 : {}".format(title))
+            log.info("****************************证件过期流程已生成*************************")
+            return render(request,'result.html',{"data":"发起成功!"})
+            # return render(request, 'result.html', {"data":
+            #                                                  {"status": "successfully",
+            #                                                   "data": title,
+            #                                                   "code": '200'}
+            #                                              }
+            #               )
 
         else:
             raise ValueError("该机构不存在")
     except Exception as e :
-        return render(request,'clientreview.html',{"data":str(e),"code":"500"})
+        log.info("error is :".format(str(e)))
+        return render(request,'result.html',{"data":str(e)})
 
 def form(request):
     return render(request,'certexpired.html')
@@ -263,7 +285,6 @@ def startjob1(request):
             for i in range(len(titleList)):
                 title["title{}".format(i+1)] = titleList[i]
 
-            log.info("已经执行完循环了")
             log.info("****************************证件过期流程已生成*************************")
             return JsonResponse({"status":"successfully",
                                  "data":title,

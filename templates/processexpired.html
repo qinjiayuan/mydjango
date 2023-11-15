@@ -1,0 +1,20 @@
+<form method="post" action="/processexpired/startjob" charset="UTF-8" target="loading-form">
+    {% csrf_token %}
+    <label><font size="4px"><strong>公司名称</strong></font></label><br>
+    <input type ="text" name="corporatename" placeholder="请在这里输入公司名称"><br>
+    <label><font size="4px"><strong>客户经理</strong></font></label><br>
+    <input type="text"  name="customermanager" placeholder="请在客户经理的中文名字"><br>
+    <label><font size="4px"><strong>过期类型</strong></font></label><br>
+    <input type="text"  name="expired" placeholder="0-即将过期，1-已过期"><br>
+    <label><font size="4px"><strong>环境</strong></font></label><br>
+    <input type="text"  name="env" placeholder="host:port,不填默认217环境"><br>
+
+    <input type="submit" value="提交" >
+    <button type="button" onclick="history.back()">返回</button>
+
+</form>
+
+<!-- 加载界面 -->
+<div id="loading-form-overlay" style="display: none;">
+  <div id="loading-spinner"></div>
+</div>
