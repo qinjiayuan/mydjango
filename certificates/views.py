@@ -7,11 +7,13 @@ import requests
 from django.shortcuts import render
 from django.http import  HttpResponse,request,JsonResponse
 from djangoProject.models import OtcDerivativeCounterparty,AmlCounterparty,AmlBeneficiary,CrtExpiredRecord
-from django.utils import log
+# from django.utils import log
+import logging
 import random
 from djangoProject import models
 from os import environ
 env = os.environ.get("ENV")
+log = logging.getLogger("django.request")
 # Create your views here.
 class certificates():
     def __init__(self,corporatename,customermanager):

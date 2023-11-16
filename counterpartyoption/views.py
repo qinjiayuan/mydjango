@@ -7,13 +7,14 @@ import requests
 from django.shortcuts import render
 from django.http import HttpResponse, request, JsonResponse
 from djangoProject.models import OtcDerivativeCounterparty, AmlCounterparty, AmlBeneficiary, CrtExpiredRecord
-from django.utils import log
+# from django.utils import log
 import random
+import logging
 from djangoProject import models
 
 # Create your views here.
 env = os.environ.get("ENV")
-
+log = logging.getLogger("django.request")
 
 class Option():
 

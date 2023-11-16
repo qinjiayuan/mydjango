@@ -9,13 +9,13 @@ from django.shortcuts import render
 from djangoProject import models
 import requests, json
 import random
-from django.utils import log
-from djangoProject import logger
+# from django.utils import log
+import logging
 from djangoProject.models import ClientReviewDetail, ClientReviewRecord, ClientReviewFileRecord, \
     ClientReviewCounterparty, CounterpartyBenefitOverList
 from django.http import JsonResponse
 env = os.environ.get("ENV")
-
+log = logging.getLogger("django.request")
 # Create your views here.
 class Clientreviewflow():
 
