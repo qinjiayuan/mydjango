@@ -87,7 +87,7 @@ LOGGING = {
             "class": "logging.handlers.RotatingFileHandler",
             "filename": LOG_PATH / f'system-{time.strftime("%Y-%m-%d")}.log',
             "maxBytes": 1024 * 1024 * 5,  # 文件大小
-            "backupCount": 5,  # 备份数
+            "backupCount": 15,  # 备份数
             "formatter": "standard",  # 输出格式
             "encoding": "utf-8",  # 设置默认编码，否则打印出来汉字乱码
             "delay":True,
