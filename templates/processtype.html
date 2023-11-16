@@ -46,7 +46,8 @@
         if (envName === 'tst') { // 根据envName的值判断跳转的地址
             window.location.href = `http://${path}/${type}/form`; // 如果是'tst'则跳转到相应地址
         } else if (envName === 'dev') { // 如果不是'tst'则跳转到相应地址
-            window.location.href = `http://${path}/${type}/form`; // 如果是'dev'则跳转到相应地址
+<!--            window.location.href = `http://${path}/${type}/form`; // 如果是'dev'则跳转到相应地址-->
+                window.location.href=`http://10.50.72.116:8081/${type}/form`
         } else { // 如果envName的值不是'tst'或'dev'，则跳转到默认地址
             window.location.href = `http://${path}/${type}/form`; // 跳转到默认地址
         }
