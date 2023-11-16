@@ -1,15 +1,10 @@
-from datetime import datetime, timedelta,date
-import random
-
 import django
-from djangoProject import models
-from ctptypublicinfo.views import publicinfoflow
 
-import cx_Oracle
 import os
-from django.db import connection
-from djangoProject.models import OtcDerivativeCounterparty , ClientReviewCounterparty,ClientReviewRecord
 from django.utils import log
+import os
+import django
+
 os.environ.setdefault("DJANGO_SETTINGS_MODULE","settings")
 # django.setup()
 
@@ -39,5 +34,7 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE","settings")
 
 
 
+if __name__ == '__main__':
+    log.debug('这个是什么错误啊')
 
 

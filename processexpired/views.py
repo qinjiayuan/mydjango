@@ -4,8 +4,8 @@ from django.shortcuts import render
 from django.http import JsonResponse, request, HttpResponse
 from djangoProject import models
 from datetime  import date,datetime,timedelta
-
-from django.utils import log
+import logging
+# from django.utils import log
 import random,requests
 from django.db.models import Q
 # #创建到期流程的数据
@@ -13,7 +13,7 @@ from djangoProject.models import AmlCounterparty, AmlBeneficiary, CounterpartyBe
 
 ENV = os.environ.get("ENV")
 
-
+log = logging.getLogger("django.request")
 
 class Option():
 
