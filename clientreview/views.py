@@ -104,7 +104,8 @@ def startjob(request):
                 raise ValueError("该客户经理不存在,请输入中文名称且确认该用户存在")
             # 删除在途流程
             models.OtcDerivativeCounterparty.objects.filter(corporate_name=reviewflow.corporateName).update(customer_manager=user,
-                                                                                                            introduction_department=department)
+                                                                                                            introduction_department=department,
+                                                                                                            allow_busi_type='OPTION,TRS,PRODUCT')
             record_list = [record["record_id"] for record in
                            models.ClientReviewRecord.objects.filter(client_name=reviewflow.corporateName).exclude(
                                current_status='CLOSED').values("record_id")]
@@ -135,10 +136,13 @@ def startjob(request):
                 corporate_name=reviewflow.corporateName,
                 is_prod_holder='03').values
             ('client_id')]
+            log.info("投资者明细的clientid:{}".format(clientIdlist))
             for client_id in clientIdlist:
                 flag: bool = True if len(
                     models.CounterpartyBenefitOverList.objects.filter(client_id=client_id).values('client_id')) else False
+                log.info("flag is %s"%str(flag))
                 if not flag:
+                    log.info("内部flag:%s"%str(flag))
                     info_benefit = CounterpartyBenefitOverList(client_id=client_id,
                                                                name='测试',
                                                                id_no='1928382942342',
@@ -148,7 +152,7 @@ def startjob(request):
                                                                financial_assets_of_lastyear='1',
                                                                assets_20million_flag='true'
                                                                )
-                    info_benefit.save()
+                    info_benefit.save(force_insert=True)
 
             datas = {'checkDateEnd': date.today(),
                      'checkDateStart': date.today(),
@@ -187,7 +191,7 @@ def startjob(request):
                                              suitability='N',
                                              suitability_log='123',
                                              created_datetime=datetime.now())
-                    obj.save()
+                    obj.save(force_insert=True)
                     models.ClientReviewCounterparty.objects.filter(record_id__in=flow_list).update(agree_info='Y',
                                                                                                    benefit_over_flag='1')
                     models.ClientReviewRecord.objects.filter(record_id=newrecordid).update(
@@ -239,7 +243,8 @@ def startjob1(request):
             # 删除在途流程
             models.OtcDerivativeCounterparty.objects.filter(corporate_name=reviewflow.corporateName).update(customer_manager=user,
                                                                                                             introduction_department=department,
-                                                                                                            allow_busi_type='OPTION,TRS')
+                                                                                                            allow_busi_type='OPTION,TRS,PRODUCT')
+
             record_list = [record["record_id"] for record in
                            models.ClientReviewRecord.objects.filter(client_name=reviewflow.corporateName).exclude(
                                current_status='CLOSED').values("record_id")]
@@ -270,9 +275,11 @@ def startjob1(request):
                 corporate_name=reviewflow.corporateName,
                 is_prod_holder='03').values
             ('client_id')]
+            print('投资者明细的client_Id ：'.format(clientIdlist))
             for client_id in clientIdlist:
-                flag: bool = True if len(
-                    models.CounterpartyBenefitOverList.objects.filter(client_id=client_id).values('client_id')) else False
+                flag: bool = True if len( [ clientid['client_id'] for clientid in
+                    models.CounterpartyBenefitOverList.objects.filter(client_id=client_id).values('client_id')])else False
+                log.info("是否添加：%s"%str(flag))
                 if not flag:
                     info_benefit = CounterpartyBenefitOverList(client_id=client_id,
                                                                name='测试',
@@ -284,7 +291,7 @@ def startjob1(request):
                                                                financial_assets_of_lastyear='1',
                                                                assets_20million_flag='true'
                                                                )
-                    info_benefit.save()
+                    info_benefit.save(force_insert=True)
             datas = {'checkDateEnd': date.today(),
                      'checkDateStart': date.today(),
                      'uniCodeList': unifiledsocialcode[0]["unifiedsocial_code"]}

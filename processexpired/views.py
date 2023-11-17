@@ -239,7 +239,7 @@ class certificates():
                                                    id_kind='business_license',
                                                    client_id=tmp,
                                                    prodname=prodname[0] if prodname else None)
-                    counterparty.save()
+                    counterparty.save(force_insert=True)
                     id = [id["id"] for id in models.AmlCounterparty.objects.filter(client_id=tmp).values("id")]
                     beneificiary = AmlBeneficiary(name='回访9527',
                                                   id=self.getid(),
@@ -253,7 +253,7 @@ class certificates():
                                                   counterparty_id=id[0],
                                                   category='1')
                     log.info("新更改的身份证:{}".format(beneificiary["id"]))
-                    beneificiary.save()
+                    beneificiary.save(force_insert=True)
                     log.info("受益人添加完成")
             else:
                 existscounterpartyid = [id["id"] for id in
@@ -281,7 +281,7 @@ class certificates():
                                                    counterparty_id=abvs,
                                                    category='1')
                     log.info("新更改的身份证:{}".format(beneificiary1["id"]))
-                    beneificiary1.save()
+                    beneificiary1.save(force_insert=True)
                     log.info("受益人已成功添加")
                 for newperson in existbeneficiary :
                     models.AmlBeneficiary.objects.filter(category='1',counterparty_id=newperson).update(name='回访9527',
@@ -503,7 +503,7 @@ def reviewjob(request,corporateName,customermanager,expired):
                                                                financial_assets_of_lastyear='1',
                                                                assets_20million_flag='true'
                                                                )
-                    info_benefit.save()
+                    info_benefit.save(force_insert=True)
             datas = {'checkDateEnd': date.today(),
                      'checkDateStart': date.today(),
                      'uniCodeList': unifiledsocialcode[0]["unifiedsocial_code"]}
@@ -541,7 +541,7 @@ def reviewjob(request,corporateName,customermanager,expired):
                                              suitability='N',
                                              suitability_log='123',
                                              created_datetime=datetime.now())
-                    obj.save()
+                    obj.save(force_insert=True)
                     models.ClientReviewCounterparty.objects.filter(record_id__in=flow_list).update(agree_info='Y',
                                                                                                    benefit_over_flag='1')
                     models.ClientReviewRecord.objects.filter(record_id=newrecordid).update(
