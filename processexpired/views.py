@@ -336,12 +336,12 @@ def certificatesjob(request,corporatename,customermanager,expired,enviroment):
 
             title = {}
             titleList = [title['title'] for title in
-                         models.CrtExpiredRecord.objects.filter(unifiedsocial_code=unifiedsocialcode).exclude(
-                             current_status__in=['CLOSED', 'CANCELLED']).values("title")]
-            log.info("title1 is {}".format(title))
+                         models.CrtExpiredRecord.objects.filter(unifiedsocial_code=unifiedsocialcode,
+                                                                current_status='PROCESSING').values("title")]
+            log.info(titleList)
             for i in range(len(titleList)):
                 title["title{}".format(i + 1)] = titleList[i]
-
+            log.info("title is {}".format(title))
             log.info("****************************证件过期流程已生成*************************")
             return JsonResponse({"status": "successfully",
                                  "data": title,
@@ -657,29 +657,54 @@ def optionjob(request,corporatename,customermanager,expired,enviroment):
 
 def startjob(request):
     try:
+        job_type = {'CLIENT_REVIEW': reviewjob,
+                    'CTPTY_INFO': publicinfojob,
+                    'CERTIFICATES': certificatesjob,
+                    'OPTION_PROD_MONITOR': optionjob}
+        flow_type = ['CLIENT_REVIEW', 'CTPTY_INFO', 'CERTIFICATES', 'OPTION_PROD_MONITOR']
+        response_type = {'CLIENT_REVIEW': '回访',
+                         'CTPTY_INFO': "公开信息",
+                         'CERTIFICATES': '证件到期',
+                         'OPTION_PROD_MONITOR': '期权产品监测'}
         corporateName = request.POST.get('corporatename')
         customermanager = request.POST.get('customermanager')
         expired = request.POST.get("expired")
         env = request.POST.get('env')
-        enviroment = ENV if env is None or env == '' else ("http://" + env)
-        indata= {}
+        env = ENV if env is None or env == '' else ("http://" + env)
+        trigger4ProcessType = request.POST.get("trigger4ProcessType")
+        if trigger4ProcessType in flow_type:
+            trigger4ProcessType = trigger4ProcessType
+        else:
+            raise ValueError({
+                "error":
+                    {"data": "流程类型错误",
+                     "code": " 500"}})
+
+        indata = {}
         indata["corporateName"] = corporateName
         indata['customermanager'] = customermanager
         indata['expired'] = expired
-        indata['env'] = env
+        indata['trigger4ProcessType'] = trigger4ProcessType
         log.info("接受到的参数为{}".format(indata))
-        certificatesjob(request,corporateName,customermanager,expired,enviroment)
-        publicinfojob(request,corporateName,customermanager,expired,enviroment)
-        reviewjob(request,corporateName,customermanager,expired,enviroment)
-        optionjob(request,corporateName,customermanager,expired,enviroment)
 
-        #触发下到期提醒
+        if trigger4ProcessType in job_type:
+            job = job_type[trigger4ProcessType](request, corporateName, customermanager, expired, env)
+        else:
+            raise ValueError(
+                {"error": {"data": "流程类型错误",
+                           "code": " 500"}
+                 }
+            )
+        # 触发下到期提醒
         log.info("*********************开始触发即将到期提醒*********************")
-        url = enviroment + "/api/manualTriggerJob/1.0.0/processExpiredRemindJob"
-        params = {'trigger4ProcessType': ''}
+        url = env + "/api/manualTriggerJob/1.0.0/processExpiredRemindJob"
+        params = {'trigger4ProcessType': trigger4ProcessType}
         response = requests.post(url=url, data=params)
         log.info(response.json())
         log.info("********************即将到期提醒已触发***********************")
+        if trigger4ProcessType in response_type:
+            log.info("trigger4ProcessType is {}".format(trigger4ProcessType))
+            response = "{}流程生成成功".format(response_type[trigger4ProcessType])
 
         return render(request,'result.html',{"data":"已成功触发!"})
     except Exception as e :
@@ -692,37 +717,61 @@ def form(request):
 
 def processexpiredjob(request):
     try:
+        job_type = {'CLIENT_REVIEW': reviewjob,
+                    'CTPTY_INFO': publicinfojob,
+                    'CERTIFICATES': certificatesjob,
+                    'OPTION_PROD_MONITOR': optionjob}
+        flow_type = ['CLIENT_REVIEW', 'CTPTY_INFO', 'CERTIFICATES', 'OPTION_PROD_MONITOR']
+        response_type = {'CLIENT_REVIEW': '回访',
+                         'CTPTY_INFO': "公开信息",
+                         'CERTIFICATES': '证件到期',
+                         'OPTION_PROD_MONITOR': '期权产品监测'}
         corporateName = request.POST.get('corporatename')
         customermanager = request.POST.get('customermanager')
         expired = request.POST.get("expired")
         env = request.POST.get('env')
-        enviroment = ENV if env is None or env == '' else ("http://" + env)
-        indata= {}
-        indata["corporateName"]=corporateName
+        env = ENV if env is None or env == '' else ("http://" + env)
+        trigger4ProcessType = request.POST.get("trigger4ProcessType")
+        if trigger4ProcessType in flow_type:
+            trigger4ProcessType = trigger4ProcessType
+        else:
+            raise ValueError({
+                "error":
+                    {"data": "流程类型错误",
+                     "code": " 500"}})
+
+        indata = {}
+        indata["corporateName"] = corporateName
         indata['customermanager'] = customermanager
         indata['expired'] = expired
-        indata['env'] = env
+        indata['trigger4ProcessType'] = trigger4ProcessType
         log.info("接受到的参数为{}".format(indata))
-        certificatesjob(request,corporateName,customermanager,expired,enviroment)
-        publicinfojob(request,corporateName,customermanager,expired,enviroment)
-        reviewjob(request,corporateName,customermanager,expired,enviroment)
-        optionjob(request,corporateName,customermanager,expired,enviroment)
 
-
-
-        #触发下到期提醒
+        if trigger4ProcessType in job_type:
+            job = job_type[trigger4ProcessType](request, corporateName, customermanager, expired,env)
+        else:
+            raise ValueError(
+                {"error": {"data": "流程类型错误",
+                           "code": " 500"}
+                 }
+            )
+        # 触发下到期提醒
         log.info("*********************开始触发即将到期提醒*********************")
-        url = enviroment + "/api/manualTriggerJob/1.0.0/processExpiredRemindJob"
-        params = {'trigger4ProcessType': ''}
+        url = env + "/api/manualTriggerJob/1.0.0/processExpiredRemindJob"
+        params = {'trigger4ProcessType': trigger4ProcessType}
         response = requests.post(url=url, data=params)
         log.info(response.json())
         log.info("********************即将到期提醒已触发***********************")
+        if trigger4ProcessType in response_type:
+            log.info("trigger4ProcessType is {}".format(trigger4ProcessType))
+            response = "{}流程生成成功".format(response_type[trigger4ProcessType])
 
-        return JsonResponse({"status":"successfully",
-                             "code":"200",
-                             "data":"done"})
-    except Exception as e :
-        log.info("error is {}".format(str(e)))
-        return JsonResponse({"status":'failed',
-                             "code":"500",
-                             "error":str(e)})
+        return JsonResponse({"status": "successfully",
+                             "data": response,
+                             "code": "200"})
+
+    except Exception as e:
+        log.info(str(e))
+        return JsonResponse({"status": 'failed',
+                             "code": "500",
+                             "error": str(e)})
