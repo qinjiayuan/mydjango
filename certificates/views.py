@@ -239,7 +239,7 @@ def startjob1(request):
     corporatename = request.POST.get("corporatename")
     customermanager = request.POST.get("customermanager")
     env = request.POST.get("env")
-    enviroment = ENV if env is None or '' else ("http://" + env)
+    enviroment = ENV if env is None or env == '' else ("http://" + env)
     print("corporatename : {} , customermanager : {}".format(str(corporatename),str(customermanager)))
     log.info("**********************开始生成证件过期流程**************************")
     try:

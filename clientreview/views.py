@@ -233,7 +233,7 @@ def startjob1(request):
     customermanager = request.POST.get('customermanager')
     isnew = request.POST.get('isnew')
     env = request.POST.get("env")
-    enviroment = ENV if env is None or '' else ("http://" + env)
+    enviroment = ENV if env is None or env == '' else ("http://" + env)
     log.info("公司为：{},客户经理为：{},环境为：{}".format(corporateName,customermanager,enviroment))
 
     reviewflow = Clientreviewflow(corporateName, customermanager, isnew)
