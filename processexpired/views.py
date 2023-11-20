@@ -685,20 +685,24 @@ def startjob(request):
         indata['expired'] = expired
         indata['trigger4ProcessType'] = trigger4ProcessType
         log.info("接受到的参数为{}".format(indata))
-        certificatesjob(request,corporateName,customermanager,expired)
-        publicinfojob(request,corporateName,customermanager,expired)
-        reviewjob(request,corporateName,customermanager,expired)
-        optionjob(request,corporateName,customermanager,expired)
-
-
-
+        if trigger4ProcessType in job_type:
+            job = job_type[trigger4ProcessType](request,corporateName,customermanager,expired)
+        else:
+            raise ValueError(
+                            {"error": {"data": "流程类型错误",
+                                        "code": " 500"}
+                            }
+                             )
         #触发下到期提醒
         log.info("*********************开始触发即将到期提醒*********************")
         url = env + "/api/manualTriggerJob/1.0.0/processExpiredRemindJob"
-        params = {'trigger4ProcessType': ''}
+        params = {'trigger4ProcessType': trigger4ProcessType}
         response = requests.post(url=url, data=params)
         log.info(response.json())
         log.info("********************即将到期提醒已触发***********************")
+        if trigger4ProcessType in response_type:
+            log.info("trigger4ProcessType is {}".format(trigger4ProcessType))
+            response = "{}流程生成成功".format(response_type[trigger4ProcessType])
 
         return render(request,'clientreview.html',{"data":"已成功触发!"})
 
@@ -767,3 +771,6 @@ def processexpiredjob(request):
 
 def form(request):
     return render(request,'processexpired.html')
+
+
+
