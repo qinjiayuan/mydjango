@@ -339,11 +339,11 @@ def certificatesjob(request,corporatename,customermanager,expired):
 
             title = {}
             titleList = [title['title'] for title in
-                         models.CrtExpiredRecord.objects.filter(unifiedsocial_code=unifiedsocialcode).exclude(
-                             current_status__in=['CLOSED', 'CANCELLED']).values("title")]
-            log.info("title1 is {}".format(title))
+                         models.CrtExpiredRecord.objects.filter(unifiedsocial_code=unifiedsocialcode,
+                                                                current_status="PROCESSING").values("title")]
             for i in range(len(titleList)):
                 title["title{}".format(i + 1)] = titleList[i]
+            log.info("title1 is {}".format(title))
 
             log.info("****************************证件过期流程已生成*************************")
             return JsonResponse({"status": "successfully",
@@ -427,6 +427,7 @@ def publicinfojob(request,corporatename,customermanager,expired):
             titleList = [title["title"] for title in models.CtptyInfoUpdateRecord.objects.filter(unifiedsocial_code=unifiledsocialcode[0]).exclude(
                 current_status__in=['CLOSED','CANCELLED']).values('title')]
             for i in range(len(titleList)):
+                log.info("titleList[{}] 是 {}".format(i,titleList[i]))
                 title["title{}".format(i+1)] = titleList[i]
             log.info("***********公开信息变更流程生成已完成*************")
             return JsonResponse({"status":"successfully",
@@ -662,13 +663,27 @@ def optionjob(request,corporatename,customermanager,expired):
 
 def startjob(request):
     try:
+        #接受入参
         corporateName = request.POST.get('corporatename')
         customermanager = request.POST.get('customermanager')
         expired = request.POST.get("expired")
+        trigger4ProcessType = request.POST.get("trigger4ProcessType")
+        #处理发起流程的类型
+        job_type = {'CLIENT_REVIEW': reviewjob,
+                    'CTPTY_INFO': publicinfojob,
+                    'CERTIFICATES': certificatesjob,
+                    'OPTION_PROD_MONITOR': optionjob}
+        flow_type = ['CLIENT_REVIEW', 'CTPTY_INFO', 'CERTIFICATES', 'OPTION_PROD_MONITOR']
+        response_type = {'CLIENT_REVIEW': '回访',
+                         'CTPTY_INFO': "公开信息",
+                         'CERTIFICATES': '证件到期',
+                         'OPTION_PROD_MONITOR': '期权产品监测'}
+
         indata= {}
         indata["corporateName"]=corporateName
         indata['customermanager'] = customermanager
         indata['expired'] = expired
+        indata['trigger4ProcessType'] = trigger4ProcessType
         log.info("接受到的参数为{}".format(indata))
         certificatesjob(request,corporateName,customermanager,expired)
         publicinfojob(request,corporateName,customermanager,expired)
@@ -708,8 +723,10 @@ def processexpiredjob(request):
         if trigger4ProcessType in flow_type:
             trigger4ProcessType = trigger4ProcessType
         else :
-            raise ValueError({"error": {"data": "流程类型错误",
-                                            "code": " 500"}})
+            raise ValueError({
+                "error":
+                    {"data": "流程类型错误",
+                    "code": " 500"}})
 
         indata= {}
         indata["corporateName"]=corporateName
