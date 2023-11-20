@@ -4,7 +4,8 @@ import requests
 from django.shortcuts import render
 from django.http import HttpResponse ,JsonResponse
 from django.http import request
-from django.utils import log
+# from django.utils import log
+import logging
 from djangoProject import models
 from djangoProject.models import OtcDerivativeCounterparty,CtptyInfoUpdateRecord
 from djangoProject.models import CrtExpiredRecord
@@ -13,6 +14,7 @@ from datetime import date , datetime
 # Create your views here.
 import json
 ENV = os.environ.get('ENV')
+log = logging.getLogger("django.request")
 class publicinfoflow(object):
 
     def __init__(self,customerManager):

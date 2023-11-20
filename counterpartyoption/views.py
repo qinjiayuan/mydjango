@@ -1,18 +1,25 @@
-from django.shortcuts import render
 import datetime
 import os
-from datetime import date,datetime,timedelta
-from random import random
+from datetime import datetime,timedelta
 import requests
 from django.shortcuts import render
-from django.http import  HttpResponse,request,JsonResponse
-from djangoProject.models import OtcDerivativeCounterparty,AmlCounterparty,AmlBeneficiary,CrtExpiredRecord
-from django.utils import log
-import random
+from django.http import  HttpResponse, JsonResponse
+# from django.utils import log
 from djangoProject import models
+import datetime
+import os
+from datetime import datetime, timedelta
+
+import requests
+from django.http import HttpResponse, JsonResponse
+from django.shortcuts import render
+import logging
+
+from djangoProject import models
+
 # Create your views here.
 ENV = os.environ.get("ENV")
-
+log  = logging.getLogger('django.request')
 class Option():
 
     def __init__(self,corporatename,customermanager):
@@ -52,6 +59,7 @@ class Option():
 
 
 def startjob(request):
+    log.info('11')
     corporatename = request.POST.get("corporatename")
     customermanager = request.POST.get("customermanager")
     publicinfo = Option(corporatename, customermanager)
