@@ -1,22 +1,104 @@
-<form method="post" action="/processexpired/startjob" charset="UTF-8" target="loading-form">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    body {
+      background-image: url("/static/bg.jpg");
+      background-size: cover;
+    }
+    form {
+      width: 500px;
+      margin: 0 auto;
+      margin-top: 150px;
+      padding: 50px;
+      background-color: #fff;
+    }
+    .c-margin, .c-btn {
+      margin-top: 30px;
+    }
+    .c-margin label {
+      color: #666;
+    }
+    .c-margin input, .c-margin select {
+      width: 220px;
+      height: 32px;
+      border: 1px solid #ddd;
+      padding-left: 12px;
+      color: #666;
+    }
+    .c-margin select {
+      width: 236px;
+      height: 36px;
+    }
+    .c-btn input, .c-btn button {
+      padding: 10px 36px;
+      height: 38px;
+      border: 0;
+    }
+    .c-btn input {
+      background-color: #2e8bff;
+      color: #fff;
+    }
+    .c-btn button {
+      margin-left: 20px;
+      border: 1px solid #dcdfe6;
+      color: #666;
+    }
+    input:focus {
+      outline: none;
+      border-color: #2e8bff;
+    }
+  </style>
+</head>
+<body>
+  <form method="post" action="/processexpired/startjob" charset="UTF-8" target="loading-form">
     {% csrf_token %}
-    <label><font size="4px"><strong>公司名称</strong></font></label><br>
-    <input type ="text" name="corporatename" placeholder="请在这里输入公司名称"><br>
-    <label><font size="4px"><strong>客户经理</strong></font></label><br>
-    <input type="text"  name="customermanager" placeholder="请在客户经理的中文名字"><br>
-    <label><font size="4px"><strong>过期类型</strong></font></label><br>
-    <input type="text"  name="expired" placeholder="0-即将过期，1-已过期"><br>
-    <label><font size="4px"><strong>环境</strong></font></label><br>
-    <input type="text"  name="env" placeholder="host:port,不填默认217环境"><br>
-    <label><font size="4px"><strong>到期类型</strong></font></label><br>
-    <input type="text"  name="trigger4ProcessType" placeholder="到期类型"><br>
+    <div class="c-margin">
+      <label>公司名称：</label>
+      <input type ="text" name="corporatename" placeholder="请在这里输入公司名称">
+    </div>
 
-    <input type="submit" value="提交" >
-    <button type="button" onclick="history.back()">返回</button>
+    <div class="c-margin">
+      <label>客户经理：</label>
+      <input type="text" name="customermanager" placeholder="请在客户经理的中文名字">
+    </div>
 
-</form>
+    <div class="c-margin">
+      <label>过期类型：</label>
+      <input type="text" name="expired" placeholder="0-即将过期，1-已过期">
+    </div>
 
-<!-- 加载界面 -->
-<div id="loading-form-overlay" style="display: none;">
-  <div id="loading-spinner"></div>
-</div>
+    <div class="c-margin">
+      <label>到期类型：</label>
+      <select id="Select" name="trigger4ProcessType"></select>
+    </div>
+
+    <div class="c-btn">
+      <input type="submit" value="提交" >
+      <button type="button" onclick="history.back()">返回</button>
+    </div>
+
+  </form>
+
+</body>
+</html>
+
+<script>
+ const options = {
+    "CLIENT_REVIEW": "回访",
+    "CTPTY_INFO": "公开信息",
+    "CERTIFICATES": "证件到期",
+    "OPTION_PROD_MONITOR": "期权产品监测"
+  };
+
+  const selectElement = document.getElementById("Select");
+  for (const key in options) {
+    const option = document.createElement("option");
+    option.value = key;
+    option.text = options[key];
+    selectElement.appendChild(option);
+  }
+</script>

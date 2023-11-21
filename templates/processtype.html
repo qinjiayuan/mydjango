@@ -1,3 +1,71 @@
+<!--<!DOCTYPE html>-->
+<!--<html lang="en">-->
+<!--<head>-->
+<!--  <meta charset="UTF-8">-->
+<!--  <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
+<!--  <title>Document</title>-->
+<!--  <style>-->
+<!--    .container {-->
+<!--      display: flex;-->
+<!--      justify-content: center;-->
+<!--      align-items: center;-->
+<!--      height: 100vh;-->
+<!--      background-image: url("/static/bg.jpg");-->
+<!--      background-size: cover;-->
+<!--    }-->
+<!--    select {-->
+<!--      width: 200px;-->
+<!--      height: 38px;-->
+<!--      font-size: 20px;-->
+<!--    }-->
+<!--    button {-->
+<!--      color: #fff;-->
+<!--      padding: 12px;-->
+<!--      background-color: #1f93d5;-->
+<!--      border: 0;-->
+<!--      margin-right: 16px;-->
+<!--    }-->
+<!--  </style>-->
+<!--</head>-->
+<!--<body>-->
+<!--  <div class="container">-->
+<!--    <h1>-->
+<!--      <select name="envName" id="envName">-->
+<!--        <option value="tst">tst</option>-->
+<!--        <option value="dev">dev</option>-->
+<!--      </select>-->
+<!--    </h1>-->
+<!--    <button onclick="dealPath('clientreview')">回访流程</button>-->
+<!--    <button onclick="dealPath('ctptypublicinfo')">公开信息变更流程</button>-->
+<!--    <button onclick="dealPath('certificates')">证件过期流程</button>-->
+<!--    <button onclick="dealPath('counterpartyoption')">期权产品监测流程</button>-->
+<!--    <button onclick="dealPath('processexpired')">即将到期邮件提醒</button>-->
+<!--  </div>-->
+<!--</body>-->
+<!--</html>-->
+<!--<script>-->
+<!--    const { host, pathname } = window.location;-->
+<!--    var path = host || '127.0.0.1:8080';-->
+<!--    console.log("host:", path);-->
+<!--&lt;!&ndash;    function dealPath(type) {&ndash;&gt;-->
+
+<!--&lt;!&ndash;      window.location.href = `http://${path}/${type}/form`&ndash;&gt;-->
+<!--&lt;!&ndash;    }&ndash;&gt;-->
+
+<!--    function dealPath(type) {-->
+<!--        var envName = document.getElementById('envName').value; // 获取envName的值-->
+<!--        if (envName === 'tst') { // 根据envName的值判断跳转的地址-->
+<!--            window.location.href = `http://${path}/${type}/form`; // 如果是'tst'则跳转到相应地址-->
+<!--        } else if (envName === 'dev') { // 如果不是'tst'则跳转到相应地址-->
+<!--&lt;!&ndash;            window.location.href = `http://${path}/${type}/form`; // 如果是'dev'则跳转到相应地址&ndash;&gt;-->
+<!--                window.location.href=`http://10.50.72.116:8081/${type}/form`-->
+<!--        } else { // 如果envName的值不是'tst'或'dev'，则跳转到默认地址-->
+<!--            window.location.href = `http://${path}/${type}/form`; // 跳转到默认地址-->
+<!--        }-->
+<!--    }-->
+<!--</script>-->
+<!--</html>-->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,56 +73,93 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
   <style>
+    body {
+      background-image: url("/static/bg.jpg");
+      background-size: cover;
+    }
     select {
       width: 200px;
       height: 38px;
       font-size: 20px;
     }
-    button {
-      color: #fff;
-      padding: 12px;
-      background-color: #1f93d5;
+    form {
+      width: 500px;
+      margin: 0 auto;
+      margin-top: 150px;
+      padding: 50px;
+      background-color: #fff;
+    }
+    .c-margin, .c-btn {
+      margin-top: 30px;
+    }
+    .c-margin label {
+      color: #666;
+    }
+    .c-margin input, .c-margin select {
+      width: 220px;
+      height: 32px;
+      border: 1px solid #ddd;
+      padding-left: 12px;
+      color: #666;
+    }
+    .c-margin select {
+      width: 236px;
+      height: 36px;
+    }
+    .c-btn input, .c-btn button {
+      padding: 10px 36px;
+      height: 38px;
       border: 0;
-      margin-right: 16px;
+    }
+    .c-btn input {
+      background-color: #2e8bff;
+      color: #fff;
+    }
+    .c-btn button {
+      margin-left: 20px;
+      border: 1px solid #dcdfe6;
+      color: #666;
+    }
+    input:focus {
+      outline: none;
+      border-color: #2e8bff;
     }
   </style>
 </head>
 <body>
-    <h1>
-      <select name="envName" id="envName">
+    <div class = "c-btn">
+        <select name="envName" id="envName">
         <option value="tst">tst</option>
         <option value="dev">dev</option>
       </select>
-    </h1>
-    <button onclick="dealPath('clientreview')">回访流程</button>
+        <button onclick="dealPath('clientreview')">回访流程</button>
     <button onclick="dealPath('ctptypublicinfo')">公开信息变更流程</button>
     <button onclick="dealPath('certificates')">证件过期流程</button>
     <button onclick="dealPath('counterpartyoption')">期权产品监测流程</button>
     <button onclick="dealPath('processexpired')">即将到期邮件提醒</button>
+    </div>
 </body>
+</html>
+
 <script>
     const { host, pathname } = window.location;
     var path = host || '127.0.0.1:8080';
     console.log("host:", path);
+<!--    function dealPath(type) {-->
+
+<!--      window.location.href = `http://${path}/${type}/form`-->
+<!--    }-->
 
     function dealPath(type) {
-    var envName = document.getElementById('envName').value;
-    if(envName === 'tst'){
-    window.location.href = `http://10.50.72.116:8080/${type}/form`;
-    console.log("href:",href);
-    }
-    else if(envName === 'dev'){
-    window.location.href = `http://10.50.72.116:8081/${type}/form`;
-    console.log("href:",href);
-        }
-
-    else {
-        window.location.href = `http://${path}/${type}/form`;
+        var envName = document.getElementById('envName').value; // 获取envName的值
+        if (envName === 'tst') { // 根据envName的值判断跳转的地址
+            window.location.href = `http://${path}/${type}/form`; // 如果是'tst'则跳转到相应地址
+        } else if (envName === 'dev') { // 如果不是'tst'则跳转到相应地址
+<!--            window.location.href = `http://${path}/${type}/form`; // 如果是'dev'则跳转到相应地址-->
+                window.location.href=`http://10.50.72.116:8081/${type}/form`
+        } else { // 如果envName的值不是'tst'或'dev'，则跳转到默认地址
+            window.location.href = `http://${path}/${type}/form`; // 跳转到默认地址
         }
     }
-
-
-
-
 </script>
-</html>
+
