@@ -1,19 +1,95 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
+<!--<!DOCTYPE html>-->
+<!--<html lang="en">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <meta name="viewport" content="width=device-width,initial-scale=1.0">-->
+<!--    <title>Document</title>-->
+<!--    <style>-->
+<!--    body{-->
+<!--        background-image:url("/static/bg.jpg");-->
+<!--        background-size:cover;-->
+<!--        }-->
+<!--        button {-->
+<!--        color:#fff;-->
+<!--        padding:12px;-->
+<!--        background-color:#1f93d5;-->
+<!--        boder:0;-->
+<!--        margin-right:16px;-->
+<!--        }-->
 
+<!--    </style>-->
+
+<!--</head>-->
+<!--<body>-->
+<!--    <h1>{{data}}</h1>-->
+<!--&lt;!&ndash;    <button onclick="setreviewURL()">返回回访流程生成</button>&ndash;&gt;-->
+<!--&lt;!&ndash;    <button onclick="setpublicURL()">返回公开信息流程生成</button>&ndash;&gt;-->
+<!--&lt;!&ndash;    <button onclick="setcertURL()">返回证件到期生成</button>&ndash;&gt;-->
+<!--&lt;!&ndash;    <button onclick="setoptionURL()">返回期权产品监测流程生成</button>&ndash;&gt;-->
+<!--&lt;!&ndash;    <button onclick="setexpiredURL()">返回即将到期生成</button>&ndash;&gt;-->
+<!--    <button onclick="back()">返回</button>-->
+
+<!--</body>-->
+<!--<script>-->
+<!--    var host = window.location.host||'127.0.0.1:8080';-->
+<!--    var pathname = window.location.pathname-->
+<!--    console.log("host:",host);-->
+
+<!--    function back(){-->
+<!--        window.location.href='http://' + host + '/clientreview/processtype'-->
+<!--    }-->
+
+<!--</script>-->
+<!--</html>-->
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.2/css/all.css">
+
+    <style>
+        .container {
+            display: flex;
+            flex-direction: column; /* 改为列布局 */
+            margin: 0 auto;
+            margin-top: 150px;
+            justify-content: center;
+            align-items: center;
+            width: 700px;
+            height: 323px;
+            border: 2px solid white;
+            padding: 10px;
+            text-align: center;
+            background-color: #fff;
+        }
+        body {
+            background-image: url("/static/bg.jpg");
+            background-size: cover;
+        }
+        .green-check {
+            font-size: 36px;
+            color: green;
+        }
+        label {
+            margin-top: 10px; /* 根据需要调整 */
+        }
+        .container button{
+            margin-left:20px;
+            color:#666;
+            padding: 10px 36px;
+             height: 38px;
+            border: 0;
+            margin-top: 40px; /* 新增的 margin-top */
+        }
+    </style>
 </head>
 <body>
-    <h1>{{data}}</h1>
-<!--    <button onclick="setreviewURL()">返回回访流程生成</button>-->
-<!--    <button onclick="setpublicURL()">返回公开信息流程生成</button>-->
-<!--    <button onclick="setcertURL()">返回证件到期生成</button>-->
-<!--    <button onclick="setoptionURL()">返回期权产品监测流程生成</button>-->
-<!--    <button onclick="setexpiredURL()">返回即将到期生成</button>-->
-    <button onclick="back()">返回</button>
-
+    <div class="container">
+        <i class="green-check fas fa-check-circle"></i>
+        <label>{{data}}</label>
+        <button type="button" onclick="back()">返回</button> <!-- 新添加的按钮 -->
+    </div>
 </body>
+
 <script>
     var host = window.location.host||'127.0.0.1:8080';
     var pathname = window.location.pathname
