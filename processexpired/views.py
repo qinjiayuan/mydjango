@@ -504,7 +504,7 @@ def reviewjob(request,corporateName,customermanager,expired):
                                                                professional_investor_flag='1',
                                                                invest_3year_exp_flag='1',
                                                                financial_assets_of_lastyear='1',
-                                                               assets_20million_flag='true'
+                                                               assets_20million_flag='1'
                                                                )
                     info_benefit.save(force_insert=True)
             datas = {'checkDateEnd': date.today(),

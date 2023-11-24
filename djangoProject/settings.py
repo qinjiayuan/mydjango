@@ -85,6 +85,8 @@ LOGGING = {
         "default": {
             "level": "DEBUG",
             "class": "logging.handlers.RotatingFileHandler",
+
+
             "filename": LOG_PATH / f'system-{time.strftime("%Y-%m-%d")}.log',
             "maxBytes": 1024 * 1024 * 5,  # 文件大小
             "backupCount": 15,  # 备份数
