@@ -64,7 +64,7 @@ LOG_PATH = BASE_DIR / "logs"
 
 if not os.path.exists(LOG_PATH):
     os.mkdir(LOG_PATH)
-#
+
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": True,
@@ -84,23 +84,27 @@ LOGGING = {
         # 默认记录所有日志
         "default": {
             "level": "DEBUG",
-            "class": "logging.handlers.RotatingFileHandler",
+            "class": "logging.handlers.TimedRotatingFileHandler",
 
 
             "filename": LOG_PATH / f'system-{time.strftime("%Y-%m-%d")}.log',
-            "maxBytes": 1024 * 1024 * 5,  # 文件大小
+            "when":"midnight",
+            "interval": 1,
+            # "maxBytes": 1024 * 1024 * 5,  # 文件大小
             "backupCount": 15,  # 备份数
             "formatter": "standard",  # 输出格式
             "encoding": "utf-8",  # 设置默认编码，否则打印出来汉字乱码
-            "delay":True,
+            # "delay":True,
         },
         # 输出错误日志
         "error": {
             "level": "ERROR",
-            "class": "logging.handlers.RotatingFileHandler",
+            "class": "logging.handlers.TimedRotatingFileHandler",
             "filename": LOG_PATH / f'error-{time.strftime("%Y-%m-%d")}.log',
-            "maxBytes": 1024 * 1024 * 5,  # 文件大小 5mb
-            "backupCount": 5,  # 备份数
+            "when":"midnight",
+            "interval": 1,
+            # "maxBytes": 1024 * 1024 * 5,  # 文件大小 5mb
+            "backupCount": 15,  # 备份数
             "formatter": "standard",  # 输出格式
             "encoding": "utf-8",  # 设置默认编码
         },
@@ -121,12 +125,40 @@ LOGGING = {
         },
         # log 调用时需要当作参数传入
         "log": {
-            "level": "INFO",
+            "level": "DEBUG",
             "handlers": ["error", "console", "default"],
             "propagate": True,
         },
     },
 }
+
+# LOGGING = {
+#     'version': 1,
+#     'disable_existing_loggers': False,
+#     'formatters': {
+#         'simple': {
+#             'format': '%(levelname)s %(message)s'
+#         },
+#     },
+#     'handlers': {
+#         'file': {
+#             'level': 'DEBUG',
+#             'class': 'logging.handlers.TimedRotatingFileHandler',
+#             'filename': 'myproject.log',
+#             'when': 'D', # this specifies the interval
+#             'interval': 1, # defaults to 1, only necessary for other values
+#             'backupCount': 10, # how many backup file to keep, 10 days
+#             'formatter': 'simple',
+#         },
+#     },
+#     'loggers': {
+#         'api': {
+#             'level': 'DEBUG',
+#             'handlers': ['file'],  # specify the handler by name
+#         }
+#     }
+# }
+
 
 
 
