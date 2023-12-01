@@ -9,10 +9,9 @@ https://docs.djangoproject.com/en/3.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
-
 from pathlib import Path
 import os
-import time
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -84,29 +83,33 @@ LOGGING = {
         # 默认记录所有日志
         "default": {
             "level": "DEBUG",
-            "class": "logging.handlers.TimedRotatingFileHandler",
+            # "class": "logging.handlers.TimedRotatingFileHandler",
+            "class": "loggy.CommonTimedRotatingFileHandler",
 
-
-            "filename": LOG_PATH / f'system-{time.strftime("%Y-%m-%d")}.log',
-            "when":"midnight",
+            # "filename": LOG_PATH / '{}.log'.format(datetime.strftime(datetime.now(),'%Y-%m-%d')),
+            "filename": LOG_PATH / 'system.log',
+            "when":"D",
             "interval": 1,
             # "maxBytes": 1024 * 1024 * 5,  # 文件大小
             "backupCount": 15,  # 备份数
             "formatter": "standard",  # 输出格式
             "encoding": "utf-8",  # 设置默认编码，否则打印出来汉字乱码
-            # "delay":True,
+            "delay":True,
+            # "suffix": "%Y-%m-%d",
         },
         # 输出错误日志
         "error": {
             "level": "ERROR",
-            "class": "logging.handlers.TimedRotatingFileHandler",
-            "filename": LOG_PATH / f'error-{time.strftime("%Y-%m-%d")}.log',
-            "when":"midnight",
+            "class": "loggy.CommonTimedRotatingFileHandler",
+            # "filename": LOG_PATH / f'error-{time.strftime("%Y-%m-%d")}.log',
+            "filename": LOG_PATH / 'error_system.log',
+            "when":"D",
             "interval": 1,
             # "maxBytes": 1024 * 1024 * 5,  # 文件大小 5mb
             "backupCount": 15,  # 备份数
             "formatter": "standard",  # 输出格式
             "encoding": "utf-8",  # 设置默认编码
+            # "suffix": "%Y-%m-%d",
         },
         # 控制台输出
         "console": {
